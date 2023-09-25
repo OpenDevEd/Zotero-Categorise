@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "prettier": "prettier --write .",
+    "start": "ts-node src/index.ts"
+  },
   "dependencies": {
     "commander": "^11.0.0",
     "fs": "^0.0.1-security",
