@@ -34,7 +34,7 @@ Clone this repository to your local machine:
 You can use the collection command to manage Zotero collections. Here are the available options:
 
 ```
-node <script_name> collection -c <collection> -i <item...> 
+npm start collection -c <collection> -i <item...> 
 ```
 - -c, --collection <collection>: The Collection Id where you want to place the items.
 - -i, --item [item...]: One or more Item Ids that you want to place in the collection.
