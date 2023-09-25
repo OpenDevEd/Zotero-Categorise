@@ -1,7 +1,7 @@
 
-# Zotero Collection
+# Zotero Categorise
 
-This is a command-line tool for managing Zotero collections. You can use this tool to place items into collections after checking their title, description, and tags. It provides options for specifying the collection, item, and group where you want to place the items.
+A command-line tool to manage Zotero collections by placing items into specific collections based on their title, description, and tags.
 
 ## Installation
 
