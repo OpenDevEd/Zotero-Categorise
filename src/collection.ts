@@ -1,5 +1,5 @@
 import Zotero from 'zotero-lib';
-
+// import fs from 'fs';
 type CommanderOptions = {
   item: string[];
   collection: string;
@@ -11,36 +11,46 @@ type Collection = {
     name: string;
     key: string;
   };
-  meta?:{ numCollections: number; numItems: number }
+  meta?: { numCollections: number; numItems: number };
 };
-type ZoterItem={
-  title:string;
-  abstractNote:string;
-  tags:[{tag:string}];
-}
+type ZoterItem = {
+  title: string;
+  abstractNote: string;
+  tags: [{ tag: string }];
+  collections: string[];
+};
 
 async function addItemToCollection(
   itemId: string,
   zotero: Zotero,
   listCollections: [string, string, boolean][]
 ) {
-  let result:ZoterItem;
+  let result: ZoterItem;
   try {
-    result = await zotero.item({key: itemId});
-    if(!result)
-      throw new Error("not found");
-      
+    result = await zotero.item({ key: itemId });
+    if (!result) throw new Error('not found');
+    // fs.writeFileSync('log/item.json', JSON.stringify(result.collections));
+    // fs.writeFileSync('log/collection.json', JSON.stringify(listCollections));
+    for (const el of listCollections) {
+      if (result.collections.includes(el[1])) el[2] = true;
+    }
+
+    listCollections = listCollections.filter(
+      (item: [string, string, boolean]) => item[2] !== true
+    );
+    // fs.writeFileSync('log/correctcollection.json', JSON.stringify(listCollections));
     
     listCollections.map(async (collectionkey: [string, string, boolean]) => {
       const searchFor = collectionkey[0].toLowerCase();
-      collectionkey[2] =
+      const resultIncludes =
         result.title.toLowerCase().includes(searchFor) ||
         result.abstractNote.toLowerCase().includes(searchFor) ||
         result.tags.some((tag: { tag: string }) =>
           tag.tag.toLowerCase().includes(searchFor)
         );
+      if (resultIncludes) collectionkey[2] = true;
     });
-  }catch (error) {
+  } catch (error) {
     console.log(`error happend when retreving ${itemId}`);
     process.exit(0);
   }
@@ -53,14 +63,11 @@ async function addItemToCollection(
       addtocollection: secondElements,
       verbose: true,
     });
-
   } catch (error) {
     console.log(`error happend when retreving ${itemId}`);
     process.exit(0);
-
   }
 }
-
 
 type Options = {
   key: string[];
@@ -84,17 +91,19 @@ async function collection(commanderOptions: CommanderOptions) {
   };
   if (groupid) {
     options.group = groupid;
-  }  
+  }
   const listCollections: [string, string, boolean][] = [];
-  let result: Collection ;
+  let result: Collection;
   try {
-    result =  await zotero.collection(options);
-    if(!result)
+    result = await zotero.collection(options);
+    if (!result)
       throw new Error(`There is no collection with this key ${collectionId}`);
-    if(result.meta?.numCollections==0)
-      throw new Error(`There is no sub collection in this collection ${collectionId} please add a sub collection`);
+    if (result.meta?.numCollections == 0)
+      throw new Error(
+        `There is no sub collection in this collection ${collectionId} please add a sub collection`
+      );
 
-    const results:Collection[]=await zotero.collections(options);
+    const results: Collection[] = await zotero.collections(options);
     results.forEach(async (collectionkey: Collection) => {
       listCollections.push([
         collectionkey.data.name,
@@ -102,13 +111,11 @@ async function collection(commanderOptions: CommanderOptions) {
         false,
       ]);
     });
-  }catch (error) {
+  } catch (error) {
     console.log((error as Error).message);
-  
   }
-
+  if (!listCollections.length) return;
   for (const item of itemId) {
-    
     await addItemToCollection(item, zotero, listCollections);
   }
 }
