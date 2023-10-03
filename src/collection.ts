@@ -1,9 +1,9 @@
 import Zotero from 'zotero-lib';
-// import fs from 'fs';
 type CommanderOptions = {
   item: string[];
   collection: string;
   group: string;
+  test: boolean;
 };
 
 type Collection = {
@@ -23,22 +23,28 @@ type ZoterItem = {
 async function addItemToCollection(
   itemId: string,
   zotero: Zotero,
-  listCollections: [string, string, boolean][]
+  listCollections: [string, string, boolean][],
+  testmode:boolean,
+  FinalOutput:string
 ) {
   let result: ZoterItem;
   try {
     result = await zotero.item({ key: itemId });
+    FinalOutput+="Get item data :"+itemId+"\n";
     if (!result) throw new Error('not found');
-    // fs.writeFileSync('log/item.json', JSON.stringify(result.collections));
-    // fs.writeFileSync('log/collection.json', JSON.stringify(listCollections));
     for (const el of listCollections) {
       if (result.collections.includes(el[1])) el[2] = true;
     }
+    // get list of collections that 3rd element is true
+    const listCollectionsForOutput = listCollections
+      .filter((item: [string, string, boolean]) => item[2] === true)
+      .map((item: [string, string, boolean]) => [item[0], item[1]]);
+    FinalOutput+="Subcollections that already have the item: "+JSON.stringify(listCollectionsForOutput)+"\n";
 
     listCollections = listCollections.filter(
       (item: [string, string, boolean]) => item[2] !== true
     );
-    // fs.writeFileSync('log/correctcollection.json', JSON.stringify(listCollections));
+    FinalOutput+="Subcollections that do not have the item : "+JSON.stringify(listCollections)+"\n";
     
     listCollections.map(async (collectionkey: [string, string, boolean]) => {
       const searchFor = collectionkey[0].toLowerCase();
@@ -57,15 +63,25 @@ async function addItemToCollection(
   const secondElements = listCollections
     .filter((item: [string, string, boolean]) => item[2] === true)
     .map((item: [string, string, boolean]) => item[1]);
-  try {
-    await zotero.item({
-      key: itemId,
-      addtocollection: secondElements,
-      verbose: true,
-    });
-  } catch (error) {
-    console.log(`error happend when retreving ${itemId}`);
-    process.exit(0);
+  FinalOutput+="Collections where item "+itemId+" will be added:  "+JSON.stringify(secondElements)+"\n";
+  
+  if(testmode)
+  {
+    console.log("\n\nFinalOutput:",FinalOutput);
+    return;    
+  }
+  if(secondElements.length)
+  {
+    try {
+      await zotero.item({
+        key: itemId,
+        addtocollection: secondElements,
+        verbose: false,
+      });
+    } catch (error) {
+      console.log(`error happend when retreving ${itemId}`);
+      process.exit(0);
+    }
   }
 }
 
@@ -73,21 +89,26 @@ type Options = {
   key: string[];
   group?: string;
   top?: boolean;
+  verbose?: boolean
+
 };
 
 async function collection(commanderOptions: CommanderOptions) {
+  let FinalOutput="";
   const itemId = commanderOptions.item;
   const collectionId = commanderOptions.collection;
+  const testmode=commanderOptions.test;
   if (!itemId.length || !collectionId) {
     console.log('Please provide an item, collection, and group id');
     return;
   }
   const groupid = commanderOptions.group;
 
-  const zotero = new Zotero({ verbose: true });
+  const zotero = new Zotero({ verbose: false });
   const options: Options = {
     top: false,
     key: [collectionId],
+    verbose: false
   };
   if (groupid) {
     options.group = groupid;
@@ -96,8 +117,11 @@ async function collection(commanderOptions: CommanderOptions) {
   let result: Collection;
   try {
     result = await zotero.collection(options);
+    FinalOutput+="Number of subcollections for "+JSON.stringify(collectionId)+"  : ";
+    
     if (!result)
-      throw new Error(`There is no collection with this key ${collectionId}`);
+    throw new Error(`There is no collection with this key ${collectionId}`);
+    FinalOutput+=result.meta?.numCollections+"\n";
     if (result.meta?.numCollections == 0)
       throw new Error(
         `There is no sub collection in this collection ${collectionId} please add a sub collection`
@@ -111,12 +135,17 @@ async function collection(commanderOptions: CommanderOptions) {
         false,
       ]);
     });
+    // make list without 3rd element
+    const listCollectionsForOutput = listCollections.map(
+      (item: [string, string, boolean]) => [item[0], item[1]]
+    );
+    FinalOutput+="Subcollections :"+JSON.stringify(listCollectionsForOutput)+"\n";
   } catch (error) {
     console.log((error as Error).message);
   }
   if (!listCollections.length) return;
   for (const item of itemId) {
-    await addItemToCollection(item, zotero, listCollections);
+    await addItemToCollection(item, zotero, listCollections,testmode,FinalOutput);
   }
 }
 

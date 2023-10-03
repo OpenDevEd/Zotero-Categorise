@@ -25,6 +25,7 @@ program
   .option('-c, --collection <collection>', 'Collection Id to place item in')
   .option('-i, --item [item...]', 'Item Id to place in collection')
   .option('-g, --group <group>', 'Group Id to place item in')
+  .option('-t, --test', 'test mode, do not actually place item in collection')
   .action(async (options) => {
     runner(collection, options);
   });
