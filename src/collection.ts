@@ -67,7 +67,7 @@ async function addItemToCollection(
   
   if(testmode)
   {
-    console.log("\n\nFinalOutput:",FinalOutput);
+    console.log("\n\nOutput:\n"+FinalOutput);
     return;    
   }
   if(secondElements.length)
