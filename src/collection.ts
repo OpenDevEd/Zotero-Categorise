@@ -31,6 +31,7 @@ async function addItemToCollection(
   try {
     result = await zotero.item({ key: itemId });
     FinalOutput+="Get item data :"+itemId+"\n";
+    console.log("Get item data :"+itemId);
     if (!result) throw new Error('not found');
     for (const el of listCollections) {
       if (result.collections.includes(el[1])) el[2] = true;
@@ -40,11 +41,13 @@ async function addItemToCollection(
       .filter((item: [string, string, boolean]) => item[2] === true)
       .map((item: [string, string, boolean]) => [item[0], item[1]]);
     FinalOutput+="Subcollections that already have the item: "+JSON.stringify(listCollectionsForOutput)+"\n";
+    console.log("Subcollections that already have the item: "+JSON.stringify(listCollectionsForOutput));
 
     listCollections = listCollections.filter(
       (item: [string, string, boolean]) => item[2] !== true
     );
     FinalOutput+="Subcollections that do not have the item : "+JSON.stringify(listCollections)+"\n";
+    console.log("Subcollections that do not have the item : "+JSON.stringify(listCollections));
     
     listCollections.map(async (collectionkey: [string, string, boolean]) => {
       const searchFor = collectionkey[0].toLowerCase();
@@ -64,6 +67,7 @@ async function addItemToCollection(
     .filter((item: [string, string, boolean]) => item[2] === true)
     .map((item: [string, string, boolean]) => item[1]);
   FinalOutput+="Collections where item "+itemId+" will be added:  "+JSON.stringify(secondElements)+"\n";
+  console.log("Collections where item "+itemId+" will be added:  "+JSON.stringify(secondElements));
   
   if(testmode)
   {
@@ -99,7 +103,7 @@ async function collection(commanderOptions: CommanderOptions) {
   const collectionId = commanderOptions.collection;
   const testmode=commanderOptions.test;
   if (!itemId.length || !collectionId) {
-    console.log('Please provide an item, collection, and group id');
+    console.log('Please provide an item, collection');
     return;
   }
   const groupid = commanderOptions.group;
@@ -119,9 +123,11 @@ async function collection(commanderOptions: CommanderOptions) {
     result = await zotero.collection(options);
     FinalOutput+="Number of subcollections for "+JSON.stringify(collectionId)+"  : ";
     
+    
     if (!result)
     throw new Error(`There is no collection with this key ${collectionId}`);
-    FinalOutput+=result.meta?.numCollections+"\n";
+  FinalOutput+=result.meta?.numCollections+"\n";
+  console.log("Number of subcollections for "+JSON.stringify(collectionId)+"  : "+result.meta?.numCollections);
     if (result.meta?.numCollections == 0)
       throw new Error(
         `There is no sub collection in this collection ${collectionId} please add a sub collection`
@@ -140,6 +146,8 @@ async function collection(commanderOptions: CommanderOptions) {
       (item: [string, string, boolean]) => [item[0], item[1]]
     );
     FinalOutput+="Subcollections :"+JSON.stringify(listCollectionsForOutput)+"\n";
+    console.log("Subcollections :"+JSON.stringify(listCollectionsForOutput));
+    
   } catch (error) {
     console.log((error as Error).message);
   }
