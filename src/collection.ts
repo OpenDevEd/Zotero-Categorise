@@ -91,7 +91,6 @@ async function addItemToCollection(
 
 type Options = {
   key: string[];
-  group?: string;
   top?: boolean;
   verbose?: boolean
 
@@ -107,16 +106,17 @@ async function collection(commanderOptions: CommanderOptions) {
     return;
   }
   const groupid = commanderOptions.group;
-
-  const zotero = new Zotero({ verbose: false });
+  let zotero;
+  if (groupid) {
+    zotero = new Zotero({ verbose: false ,"group-id":groupid});
+  } else {
+    zotero = new Zotero({ verbose: false });
+  }
   const options: Options = {
     top: false,
     key: [collectionId],
     verbose: false
   };
-  if (groupid) {
-    options.group = groupid;
-  }
   const listCollections: [string, string, boolean][] = [];
   let result: Collection;
   try {
@@ -125,7 +125,9 @@ async function collection(commanderOptions: CommanderOptions) {
     
     
     if (!result)
-    throw new Error(`There is no collection with this key ${collectionId}`);
+    {
+      throw new Error(`There is no collection with this key ${collectionId}`);
+    }
   FinalOutput+=result.meta?.numCollections+"\n";
   console.log("Number of subcollections for "+JSON.stringify(collectionId)+"  : "+result.meta?.numCollections);
     if (result.meta?.numCollections == 0)
