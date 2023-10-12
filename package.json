@@ -3,7 +3,10 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prettier": "prettier --write .",
-    "start": "ts-node src/index.ts collection"
+    "start": "ts-node src/index.ts collection",
+    "collection": "ts-node src/index.ts collection",
+    "generate": "ts-node src/index.ts generate",
+    "collectionByJson": "ts-node src/index.ts collectionByJson"
   },
   "dependencies": {
     "commander": "^11.0.0",
