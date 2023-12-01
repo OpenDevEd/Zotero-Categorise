@@ -16,7 +16,9 @@ npm install
 
 ## Usage
 
-You can use the `collection` command to manage Zotero collections. Here are the available options:
+You can use the `collection` command to place items into collections. 
+
+Here are the available options:
 
 ```
 npm start -- -c <collection> -i <item...>
@@ -28,8 +30,19 @@ or
 npm start -- -c zotero://select/groups/${Group-id}/collections/${CollectionId} -i zotero://select/Groups//${group-id}/items/${ItemId}
 ```
 
-- `-c, --collection <collection>`: The Collection Id where you want to place the items.
+In this command, the option have this function:
+
+- `-c, --collection <collection>`: The id of a collection, which has sub-collections in which you want to place the items.
 - `-i, --item [item...]`: One or more Item Ids that you want to place in the collection.
+
+For example, if your collection structure is this:
+```
+Countries
+- Sierra Leone
+- Zambia
+- Zimbabwe
+```
+Then by providing the collection id for 'Countries', items will be matched against Sierra Leone, Zambia, Zimbabwe, and placed in those collections.
 
 ### Generating Keyword-Collection Mapping
 
