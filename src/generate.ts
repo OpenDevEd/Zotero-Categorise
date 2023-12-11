@@ -17,14 +17,14 @@ type Options = {
 };
 
 type ResCollection = {
-  terms?: string[];
-  collection?: string;
-  collection_name?: string;
+  collections?: {}[];
+  source_collection?: string;
+  source_collection_name?: string;
 };
 
 type ResList = {
   library?: string;
-  collections?: ResCollection[];
+  source_collections?: ResCollection[];
 };
 
 async function generate(commanderOptions: CommanderOptions) {
@@ -38,13 +38,13 @@ async function generate(commanderOptions: CommanderOptions) {
 
   const list: ResList = {};
   list.library = groupid;
-  list.collections = [];
+  list.source_collections = [];
 
   for (const collectionId of commanderOptions.collection) {
     const collectionList: ResCollection = {};
-    collectionList.collection_name = '';
-    collectionList.collection = collectionId;
-    collectionList.terms = [];
+    collectionList.source_collection_name = '';
+    collectionList.source_collection = collectionId;
+    collectionList.collections = [];
 
     const options: Options = {
       top: false,
@@ -56,15 +56,20 @@ async function generate(commanderOptions: CommanderOptions) {
       console.log(`There is no collection with this key ${collectionId}`);
       continue;
     }
-    collectionList.collection_name = result.data.name;
+    collectionList.source_collection_name = result.data.name;
     if (list.library === undefined) list.library = result.library.id;
 
     const results: any = await zotero.collections(options);
 
     for (const collectionkey of results) {
-      collectionList.terms.push(collectionkey.data.name);
+      collectionList.collections.push({
+        collection_name: collectionkey.data.name,
+        collection: `zotero://select/groups/${list.library}/collections/${collectionkey.key}`,
+        terms: [{ term: collectionkey.data.name, description: 'main' }],
+      });
+      console.log(collectionkey.data);
     }
-    list.collections.push(collectionList);
+    list.source_collections.push(collectionList);
   }
 
   const filename = commanderOptions.name;

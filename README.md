@@ -16,7 +16,7 @@ npm install
 
 ## Usage
 
-You can use the `collection` command to place items into collections. 
+You can use the `collection` command to place items into collections.
 
 Here are the available options:
 
@@ -36,12 +36,14 @@ In this command, the option have this function:
 - `-i, --item [item...]`: One or more Item Ids that you want to place in the collection.
 
 For example, if your collection structure is this:
+
 ```
 Countries
 - Sierra Leone
 - Zambia
 - Zimbabwe
 ```
+
 Then by providing the collection id for 'Countries', items will be matched against Sierra Leone, Zambia, Zimbabwe, and placed in those collections.
 
 ### Generating Keyword-Collection Mapping
@@ -63,14 +65,11 @@ npm run generate -- -c [collection1] [collection2]
 The `collectionByJson` command enables you to categorize items from a JSON file into Zotero collections.
 
 ```
-npm run collectionByJson -- -j [json file] -i [item...] 
+npm run collectionByJson -- -j [json file] -i [item...]
 ```
-
 
 **Options:**
 
 - `-j, --json [json]`: Specifies the JSON file that contains the keyword-collection mapping.
 - `-i, --item [item...]`: One or more Item Ids that you want to categorize into collections.
-- `-g, --group [group]`: The Group Id where you want to place the item(s).
 - `-t, --test`: Use test mode, which does not actually place items in the collection. This is useful for verification and testing.
-

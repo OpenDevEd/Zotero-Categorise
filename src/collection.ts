@@ -7,6 +7,8 @@ type CommanderOptions = {
   test: boolean;
   name: string;
   json?: string;
+  ignoretag?: string;
+  addtag?: string;
 };
 
 type Collection = {
@@ -28,50 +30,55 @@ async function addItemToCollection(
   zotero: Zotero,
   listCollections: [string, string, boolean][],
   testmode: boolean,
-  FinalOutput: string
+  FinalOutput: string,
+  ignoretag?: string,
+  addtag?: string
 ) {
   let result: ZoterItem;
   try {
     result = await zotero.item({ key: itemId });
+
+    if (ignoretag) {
+      for (const el_tag of result.tags) {
+        if (el_tag.tag.toLowerCase() === ignoretag.toLowerCase()) {
+          FinalOutput += 'Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored' + '\n';
+          console.log('Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored');
+          return;
+        }
+      }
+    }
+    if (addtag) {
+      result.tags.push({ tag: addtag });
+      const upres = await zotero.update_item({
+        key: itemId,
+        json: { tags: result.tags },
+        verbose: false,
+      });
+      FinalOutput += 'Add tag ' + addtag + ' to item ' + itemId + '\n';
+      console.log('Add tag ' + addtag + ' to item ' + itemId);
+    }
     FinalOutput += 'Get item data :' + itemId + '\n';
     console.log('Get item data :' + itemId);
     if (!result) throw new Error('not found');
     for (const el of listCollections) {
       if (result.collections.includes(el[1])) el[2] = true;
     }
-    // get list of collections that 3rd element is true
     const listCollectionsForOutput = listCollections
       .filter((item: [string, string, boolean]) => item[2] === true)
       .map((item: [string, string, boolean]) => [item[0], item[1]]);
-    FinalOutput +=
-      'Subcollections that already have the item: ' +
-      JSON.stringify(listCollectionsForOutput) +
-      '\n';
-    console.log(
-      'Subcollections that already have the item: ' +
-        JSON.stringify(listCollectionsForOutput)
-    );
+    FinalOutput += 'Subcollections that already have the item: ' + JSON.stringify(listCollectionsForOutput) + '\n';
+    console.log('Subcollections that already have the item: ' + JSON.stringify(listCollectionsForOutput));
 
-    listCollections = listCollections.filter(
-      (item: [string, string, boolean]) => item[2] !== true
-    );
-    FinalOutput +=
-      'Subcollections that do not have the item : ' +
-      JSON.stringify(listCollections) +
-      '\n';
-    console.log(
-      'Subcollections that do not have the item : ' +
-        JSON.stringify(listCollections)
-    );
+    listCollections = listCollections.filter((item: [string, string, boolean]) => item[2] !== true);
+    FinalOutput += 'Subcollections that do not have the item : ' + JSON.stringify(listCollections) + '\n';
+    console.log('Subcollections that do not have the item : ' + JSON.stringify(listCollections));
 
     listCollections.map(async (collectionkey: [string, string, boolean]) => {
       const searchFor = collectionkey[0].toLowerCase();
       const resultIncludes =
         result.title.toLowerCase().includes(searchFor) ||
         result.abstractNote.toLowerCase().includes(searchFor) ||
-        result.tags.some((tag: { tag: string }) =>
-          tag.tag.toLowerCase().includes(searchFor)
-        );
+        result.tags.some((tag: { tag: string }) => tag.tag.toLowerCase().includes(searchFor));
       if (resultIncludes) collectionkey[2] = true;
     });
   } catch (error) {
@@ -81,21 +88,10 @@ async function addItemToCollection(
   const secondElements = listCollections
     .filter((item: [string, string, boolean]) => item[2] === true)
     .map((item: [string, string, boolean]) => item[1]);
-  FinalOutput +=
-    'Collections where item ' +
-    itemId +
-    ' will be added:  ' +
-    JSON.stringify(secondElements) +
-    '\n';
-  console.log(
-    'Collections where item ' +
-      itemId +
-      ' will be added:  ' +
-      JSON.stringify(secondElements)
-  );
+  FinalOutput += 'Collections where item ' + itemId + ' will be added:  ' + JSON.stringify(secondElements) + '\n';
+  console.log('Collections where item ' + itemId + ' will be added:  ' + JSON.stringify(secondElements));
 
   if (testmode) {
-    console.log('\n\nOutput:\n' + FinalOutput);
     return;
   }
   if (secondElements.length) {
@@ -123,6 +119,8 @@ async function collection(commanderOptions: CommanderOptions) {
   const itemId = commanderOptions.item;
   const collectionId = commanderOptions.collection;
   const testmode = commanderOptions.test;
+  const ignoretag = commanderOptions.ignoretag;
+  const addtag = commanderOptions.addtag;
   if (!itemId || !itemId.length || !collectionId) {
     console.log('Please provide an item, collection');
     return;
@@ -134,6 +132,9 @@ async function collection(commanderOptions: CommanderOptions) {
   } else {
     zotero = new Zotero({ verbose: false });
   }
+
+  // const etstres = await zotero.items({ key: itemId });
+
   const options: Options = {
     top: false,
     key: [collectionId[0]],
@@ -143,56 +144,36 @@ async function collection(commanderOptions: CommanderOptions) {
   let result: Collection;
   try {
     result = await zotero.collection(options);
-    FinalOutput +=
-      'Number of subcollections for ' +
-      JSON.stringify(collectionId[0]) +
-      '  : ';
+    FinalOutput += 'Number of subcollections for ' + JSON.stringify(collectionId[0]) + '  : ';
 
     if (!result) {
-      throw new Error(
-        `There is no collection with this key ${collectionId[0]}`
-      );
+      throw new Error(`There is no collection with this key ${collectionId[0]}`);
     }
     FinalOutput += result.meta?.numCollections + '\n';
     console.log(
-      'Number of subcollections for ' +
-        JSON.stringify(collectionId[0]) +
-        '  : ' +
-        result.meta?.numCollections
+      'Number of subcollections for ' + JSON.stringify(collectionId[0]) + '  : ' + result.meta?.numCollections
     );
     if (result.meta?.numCollections == 0)
-      throw new Error(
-        `There is no sub collection in this collection ${collectionId[0]} please add a sub collection`
-      );
+      throw new Error(`There is no sub collection in this collection ${collectionId[0]} please add a sub collection`);
 
     const results: Collection[] = await zotero.collections(options);
     // fs.writeFileSync('output.json', JSON.stringify(results));
     results.forEach(async (collectionkey: Collection) => {
-      listCollections.push([
-        collectionkey.data.name,
-        collectionkey.data.key,
-        false,
-      ]);
+      listCollections.push([collectionkey.data.name, collectionkey.data.key, false]);
     });
-    // make list without 3rd element
-    const listCollectionsForOutput = listCollections.map(
-      (item: [string, string, boolean]) => [item[0], item[1]]
-    );
-    FinalOutput +=
-      'Subcollections :' + JSON.stringify(listCollectionsForOutput) + '\n';
+    const listCollectionsForOutput = listCollections.map((item: [string, string, boolean]) => [item[0], item[1]]);
+    FinalOutput += 'Subcollections :' + JSON.stringify(listCollectionsForOutput) + '\n';
     console.log('Subcollections :' + JSON.stringify(listCollectionsForOutput));
   } catch (error) {
     console.log((error as Error).message);
   }
   if (!listCollections.length) return;
+
   for (const item of itemId) {
-    await addItemToCollection(
-      item,
-      zotero,
-      listCollections,
-      testmode,
-      FinalOutput
-    );
+    await addItemToCollection(item, zotero, listCollections, testmode, FinalOutput, ignoretag, addtag);
+  }
+  if (testmode) {
+    console.log('\n\nOutput:\n' + FinalOutput);
   }
 }
 
