@@ -42,6 +42,8 @@ program
   .option('-j, --json <json>', 'json file')
   .option('-i, --item [item...]', 'Item Id to place in collection')
   .option('-t, --test', 'test mode, do not actually place item in collection')
+  .option('--ignoretag <ignoretag>', 'Ignore Items with the Zotero tag')
+  .option('--addtag <addtag>', 'Add a tag to the item')
   .action(async (options: CommanderOptions) => {
     runner(generateByJSon, options);
   });

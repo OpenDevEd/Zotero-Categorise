@@ -1,5 +1,5 @@
 import Zotero from 'zotero-lib';
-import fs from 'fs';
+import { addItemToCollection } from './addItemToCollection';
 type CommanderOptions = {
   item: string[];
   collection: string[];
@@ -18,101 +18,19 @@ type Collection = {
   };
   meta?: { numCollections: number; numItems: number };
 };
-type ZoterItem = {
-  title: string;
-  abstractNote: string;
-  tags: [{ tag: string }];
-  collections: string[];
-};
-
-async function addItemToCollection(
-  itemId: string,
-  zotero: Zotero,
-  listCollections: [string, string, boolean][],
-  testmode: boolean,
-  FinalOutput: string,
-  ignoretag?: string,
-  addtag?: string
-) {
-  let result: ZoterItem;
-  try {
-    result = await zotero.item({ key: itemId });
-
-    if (ignoretag) {
-      for (const el_tag of result.tags) {
-        if (el_tag.tag.toLowerCase() === ignoretag.toLowerCase()) {
-          FinalOutput += 'Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored' + '\n';
-          console.log('Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored');
-          return;
-        }
-      }
-    }
-    if (addtag) {
-      result.tags.push({ tag: addtag });
-      const upres = await zotero.update_item({
-        key: itemId,
-        json: { tags: result.tags },
-        verbose: false,
-      });
-      FinalOutput += 'Add tag ' + addtag + ' to item ' + itemId + '\n';
-      console.log('Add tag ' + addtag + ' to item ' + itemId);
-    }
-    FinalOutput += 'Get item data :' + itemId + '\n';
-    console.log('Get item data :' + itemId);
-    if (!result) throw new Error('not found');
-    for (const el of listCollections) {
-      if (result.collections.includes(el[1])) el[2] = true;
-    }
-    const listCollectionsForOutput = listCollections
-      .filter((item: [string, string, boolean]) => item[2] === true)
-      .map((item: [string, string, boolean]) => [item[0], item[1]]);
-    FinalOutput += 'Subcollections that already have the item: ' + JSON.stringify(listCollectionsForOutput) + '\n';
-    console.log('Subcollections that already have the item: ' + JSON.stringify(listCollectionsForOutput));
-
-    listCollections = listCollections.filter((item: [string, string, boolean]) => item[2] !== true);
-    FinalOutput += 'Subcollections that do not have the item : ' + JSON.stringify(listCollections) + '\n';
-    console.log('Subcollections that do not have the item : ' + JSON.stringify(listCollections));
-
-    listCollections.map(async (collectionkey: [string, string, boolean]) => {
-      const searchFor = collectionkey[0].toLowerCase();
-      const resultIncludes =
-        result.title.toLowerCase().includes(searchFor) ||
-        result.abstractNote.toLowerCase().includes(searchFor) ||
-        result.tags.some((tag: { tag: string }) => tag.tag.toLowerCase().includes(searchFor));
-      if (resultIncludes) collectionkey[2] = true;
-    });
-  } catch (error) {
-    console.log(`error happend when retreving ${itemId}`);
-    process.exit(0);
-  }
-  const secondElements = listCollections
-    .filter((item: [string, string, boolean]) => item[2] === true)
-    .map((item: [string, string, boolean]) => item[1]);
-  FinalOutput += 'Collections where item ' + itemId + ' will be added:  ' + JSON.stringify(secondElements) + '\n';
-  console.log('Collections where item ' + itemId + ' will be added:  ' + JSON.stringify(secondElements));
-
-  if (testmode) {
-    return;
-  }
-  if (secondElements.length) {
-    try {
-      await zotero.item({
-        key: itemId,
-        addtocollection: secondElements,
-        verbose: false,
-      });
-    } catch (error) {
-      console.log(`error happend when retreving ${itemId}`);
-      process.exit(0);
-    }
-  }
-}
 
 type Options = {
   key: string[];
   top?: boolean;
   verbose?: boolean;
 };
+
+type ZoteroCollections = {
+  terms: string[];
+  collection: string;
+  collection_name: string;
+  situation: string;
+}[];
 
 async function collection(commanderOptions: CommanderOptions) {
   let FinalOutput = '';
@@ -133,14 +51,12 @@ async function collection(commanderOptions: CommanderOptions) {
     zotero = new Zotero({ verbose: false });
   }
 
-  // const etstres = await zotero.items({ key: itemId });
-
   const options: Options = {
     top: false,
     key: [collectionId[0]],
     verbose: false,
   };
-  const listCollections: [string, string, boolean][] = [];
+  const listCollections: ZoteroCollections = [];
   let result: Collection;
   try {
     result = await zotero.collection(options);
@@ -157,11 +73,15 @@ async function collection(commanderOptions: CommanderOptions) {
       throw new Error(`There is no sub collection in this collection ${collectionId[0]} please add a sub collection`);
 
     const results: Collection[] = await zotero.collections(options);
-    // fs.writeFileSync('output.json', JSON.stringify(results));
     results.forEach(async (collectionkey: Collection) => {
-      listCollections.push([collectionkey.data.name, collectionkey.data.key, false]);
+      listCollections.push({
+        terms: [collectionkey.data.name],
+        collection: collectionkey.data.key,
+        collection_name: collectionkey.data.name,
+        situation: 'nothing',
+      });
     });
-    const listCollectionsForOutput = listCollections.map((item: [string, string, boolean]) => [item[0], item[1]]);
+    const listCollectionsForOutput = listCollections.map((item) => [item.collection_name, item.collection]);
     FinalOutput += 'Subcollections :' + JSON.stringify(listCollectionsForOutput) + '\n';
     console.log('Subcollections :' + JSON.stringify(listCollectionsForOutput));
   } catch (error) {
@@ -170,7 +90,10 @@ async function collection(commanderOptions: CommanderOptions) {
   if (!listCollections.length) return;
 
   for (const item of itemId) {
-    await addItemToCollection(item, zotero, listCollections, testmode, FinalOutput, ignoretag, addtag);
+    FinalOutput = await addItemToCollection(item, zotero, listCollections, testmode, FinalOutput, ignoretag, addtag);
+    for (const element of listCollections) {
+      element.situation = 'nothing';
+    }
   }
   if (testmode) {
     console.log('\n\nOutput:\n' + FinalOutput);

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { collection } from './collection';
 import Zotero from 'zotero-lib';
+import { addItemToCollection } from './addItemToCollection';
 
 type Subcollections = {
   collection_name: string;
@@ -28,6 +29,13 @@ type CommanderOptions = {
   ignoretag?: string;
   addtag?: string;
 };
+
+type ZoteroCollections = {
+  terms: string[];
+  collection: string;
+  collection_name: string;
+  situation: string;
+}[];
 
 async function generateByJSon(commanderOptions: CommanderOptions) {
   if (!commanderOptions.json) {
@@ -59,42 +67,32 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
   const addtag = commanderOptions.addtag;
   const testmode = commanderOptions.test;
 
-  const resultcollcections = [];
+  const resultcollcections: ZoteroCollections = [];
   for (const element of json.source_collections) {
-    // const commanderOptions2: CommanderOptions = {
-    //   item: commanderOptions.item,
-    //   collection: [element.collection],
-    //   group: json.library,
-    //   test: commanderOptions.test,
-    //   name: commanderOptions.name,
-    // };
-    // console.log(element);
     if (!element.collections) continue;
 
     for (const collle of element.collections) {
-      const termsList = [];
+      const termsList: string[] = [];
       for (const term of collle.terms) {
         termsList.push(term.term);
       }
-      // console.log(termsList);
       resultcollcections.push({
         terms: termsList,
         collection: collle.collection,
         collection_name: collle.collection_name,
+        situation: 'nothing',
       });
-
-      // await collection(commanderOptions2);
     }
-
-    // await collection(commanderOptions2);
   }
-  console.log(resultcollcections);
   let FinalOutput = '';
-  FinalOutput += "list of collections' terms: " + JSON.stringify(resultcollcections) + '\n';
-
   for (const item of itemId) {
-    await addItemToCollection(item, zotero, resultcollcections, testmode, FinalOutput, ignoretag, addtag);
+    FinalOutput += '\n\nItem ' + item + ' :\n';
+    FinalOutput = await addItemToCollection(item, zotero, resultcollcections, testmode, FinalOutput, ignoretag, addtag);
+    for (const element of resultcollcections) {
+      element.situation = 'nothing';
+    }
   }
+  console.log(FinalOutput);
 }
 
 export { generateByJSon };
