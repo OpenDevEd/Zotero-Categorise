@@ -37,7 +37,10 @@ type ZoteroCollections = {
   situation: string;
 }[];
 
+
+// this function is used to categorize items from a JSON file into Zotero collections
 async function generateByJSon(commanderOptions: CommanderOptions) {
+  // check if the user provided a json file
   if (!commanderOptions.json) {
     console.log('Please provide a json file');
     return;
@@ -68,6 +71,8 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
   const testmode = commanderOptions.test;
 
   const resultcollcections: ZoteroCollections = [];
+  // get the collections from the json file
+  // make a list of collections with their terms,name and situation
   for (const element of json.source_collections) {
     if (!element.collections) continue;
 
@@ -76,6 +81,7 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
       for (const term of collle.terms) {
         termsList.push(term.term);
       }
+
       resultcollcections.push({
         terms: termsList,
         collection: collle.collection,
@@ -85,6 +91,7 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     }
   }
   let FinalOutput = '';
+  // add the items to the collections for each item 
   for (const item of itemId) {
     FinalOutput += '\n\nItem ' + item + ' :\n';
     FinalOutput = await addItemToCollection(item, zotero, resultcollcections, testmode, FinalOutput, ignoretag, addtag);

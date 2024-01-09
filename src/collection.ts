@@ -59,6 +59,7 @@ async function collection(commanderOptions: CommanderOptions) {
   const listCollections: ZoteroCollections = [];
   let result: Collection;
   try {
+    // fetch the collection
     result = await zotero.collection(options);
     FinalOutput += 'Number of subcollections for ' + JSON.stringify(collectionId[0]) + '  : ';
 
@@ -69,9 +70,11 @@ async function collection(commanderOptions: CommanderOptions) {
     console.log(
       'Number of subcollections for ' + JSON.stringify(collectionId[0]) + '  : ' + result.meta?.numCollections
     );
+    // check if there is sub collections
     if (result.meta?.numCollections == 0)
       throw new Error(`There is no sub collection in this collection ${collectionId[0]} please add a sub collection`);
 
+    // fetch the sub collections
     const results: Collection[] = await zotero.collections(options);
     results.forEach(async (collectionkey: Collection) => {
       listCollections.push({
@@ -90,6 +93,7 @@ async function collection(commanderOptions: CommanderOptions) {
   if (!listCollections.length) return;
 
   for (const item of itemId) {
+    // add item to collection
     FinalOutput = await addItemToCollection(item, zotero, listCollections, testmode, FinalOutput, ignoretag, addtag);
     for (const element of listCollections) {
       element.situation = 'nothing';

@@ -62,16 +62,19 @@ async function generate(commanderOptions: CommanderOptions) {
       key: [collectionId],
       verbose: false,
     };
+    // fetch the collection
     const result: any = await zotero.collection(options);
+    // check if the collection exists
     if (!result || !result.data) {
       console.log(`There is no collection with this key ${collectionId}`);
       continue;
     }
     collectionList.source_collection_name = result.data.name;
     if (list.library === undefined) list.library = result.library.id;
-
+    // fetch the subcollections
     const results: any = await zotero.collections(options);
-
+    
+    // make a list of the subcollections with the collection name, the collection key and the terms
     for (const collectionkey of results) {
       collectionList.collections.push({
         collection_name: collectionkey.data.name,

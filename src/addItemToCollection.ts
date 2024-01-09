@@ -46,7 +46,7 @@ async function addItemToCollection(
     }
     if (addtag) {
       result.tags.push({ tag: addtag });
-      const upres = await zotero.update_item({
+      await zotero.update_item({
         key: itemId,
         json: { tags: result.tags },
         verbose: false,
@@ -57,6 +57,7 @@ async function addItemToCollection(
     FinalOutput += 'Get item data :' + itemId + '\n';
     console.log('Get item data :' + itemId);
     if (!result) throw new Error('not found');
+    // check if the item is already in the collection
     for (const el of listCollections) {
       if (result.collections.includes(getCollectionLetters(el.collection))) el.situation = 'already_exist';
     }
@@ -68,6 +69,7 @@ async function addItemToCollection(
       `Subcollections that already have the item ${itemId}: ` + JSON.stringify(alreadyCollectionsFiltered) + '\n';
     console.log(`Subcollections that already have the item ${itemId}: ` + JSON.stringify(alreadyCollectionsFiltered));
 
+    // get the item data and check if it contains the terms of the sub collections
     for (const element of listCollections) {
       if (element.situation === 'already_exist') continue;
       for (const term of element.terms) {
@@ -86,7 +88,7 @@ async function addItemToCollection(
     console.log(`error happend when retreving ${itemId}`);
     process.exit(0);
   }
-
+  // get the sub collections that will have the item
   const targetCollections = listCollections.filter((item: { situation: string }) => item.situation === 'to_add');
   const targetCollectionsFiltered = targetCollections.map((item) => getCollectionLetters(item.collection));
   FinalOutput +=
@@ -96,6 +98,7 @@ async function addItemToCollection(
   if (testmode) {
     return FinalOutput;
   }
+  // add the item to the sub collections
   if (targetCollectionsFiltered.length) {
     try {
       await zotero.item({
