@@ -100,4 +100,4 @@ async function collection(commanderOptions: CommanderOptions) {
   }
 }
 
-export { collection, CommanderOptions };
+export { collection, CommanderOptions};

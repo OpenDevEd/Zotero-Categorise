@@ -6,10 +6,11 @@
     "start": "ts-node src/index.ts collection",
     "collection": "ts-node src/index.ts collection",
     "generate": "ts-node src/index.ts generate",
-    "collectionByJson": "ts-node src/index.ts collectionByJson"
+    "collectionByJson": "ts-node src/index.ts collectionByJson",
+    "help": "ts-node src/index.ts help"
   },
   "dependencies": {
-    "commander": "^11.0.0",
+    "commander": "^11.1.0",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "toml": "^3.0.0",

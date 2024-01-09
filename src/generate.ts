@@ -16,8 +16,15 @@ type Options = {
   verbose?: boolean;
 };
 
+
+type Collection = {
+  collection_name: string;
+  collection: string;
+  terms: [{ term: string; description: string }];
+};
+
 type ResCollection = {
-  collections?: {}[];
+  collections?: Collection[];
   source_collection?: string;
   source_collection_name?: string;
 };
@@ -34,6 +41,10 @@ async function generate(commanderOptions: CommanderOptions) {
     zotero = new Zotero({ verbose: false });
   } else {
     zotero = new Zotero({ verbose: false, 'group-id': groupid });
+  }
+  if (!commanderOptions.collection) {
+    console.log('You must provide at least one collection');
+    return;
   }
 
   const list: ResList = {};

@@ -14,7 +14,7 @@ type ZoteroCollections = {
   situation: string;
 }[];
 
-function get_collection_letters(collection: string) {
+function getCollectionLetters(collection: string) {
   if (collection.includes('/')) {
     const words = collection.split('/');
     return words[words.length - 1];
@@ -36,8 +36,8 @@ async function addItemToCollection(
     result = await zotero.item({ key: itemId });
 
     if (ignoretag) {
-      for (const el_tag of result.tags) {
-        if (el_tag.tag.toLowerCase() === ignoretag.toLowerCase()) {
+      for (const elTag of result.tags) {
+        if (elTag.tag.toLowerCase() === ignoretag.toLowerCase()) {
           FinalOutput += 'Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored' + '\n';
           console.log('Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored');
           return FinalOutput;
@@ -58,12 +58,12 @@ async function addItemToCollection(
     console.log('Get item data :' + itemId);
     if (!result) throw new Error('not found');
     for (const el of listCollections) {
-      if (result.collections.includes(get_collection_letters(el.collection))) el.situation = 'already_exist';
+      if (result.collections.includes(getCollectionLetters(el.collection))) el.situation = 'already_exist';
     }
     const alreadyCollections = listCollections.filter(
       (item: { situation: string }) => item.situation === 'already_exist'
     );
-    const alreadyCollectionsFiltered = alreadyCollections.map((item) => get_collection_letters(item.collection));
+    const alreadyCollectionsFiltered = alreadyCollections.map((item) => getCollectionLetters(item.collection));
     FinalOutput +=
       `Subcollections that already have the item ${itemId}: ` + JSON.stringify(alreadyCollectionsFiltered) + '\n';
     console.log(`Subcollections that already have the item ${itemId}: ` + JSON.stringify(alreadyCollectionsFiltered));
@@ -88,7 +88,7 @@ async function addItemToCollection(
   }
 
   const targetCollections = listCollections.filter((item: { situation: string }) => item.situation === 'to_add');
-  const targetCollectionsFiltered = targetCollections.map((item) => get_collection_letters(item.collection));
+  const targetCollectionsFiltered = targetCollections.map((item) => getCollectionLetters(item.collection));
   FinalOutput +=
     'Collections where item ' + itemId + ' will be added:  ' + JSON.stringify(targetCollectionsFiltered) + '\n';
   console.log('Collections where item ' + itemId + ' will be added:  ' + JSON.stringify(targetCollectionsFiltered));
