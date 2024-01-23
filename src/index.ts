@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from 'commander';
 import { generate } from './generate';
 import { collection, CommanderOptions } from './collection';
@@ -57,3 +58,6 @@ program
   })
 
 program.parse(process.argv);
+
+
+module.exports = program;

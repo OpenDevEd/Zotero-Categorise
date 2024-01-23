@@ -3,6 +3,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prettier": "prettier --write .",
+    "build": "tsc",
     "start": "ts-node src/index.ts collection",
     "collection": "ts-node src/index.ts collection",
     "generate": "ts-node src/index.ts generate",
@@ -28,6 +29,29 @@
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.3",
-    "typescript": "^5.2.2"
-  }
+    "typescript": "^5.3.3"
+  },
+  "name": "zotero-categorise",
+  "description": "A command-line tool to manage Zotero collections by placing items into specific collections based on their title, description, and tags.",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "bin": {
+    "zotero-categorise": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenDevEd/Zotero-Categorise.git"
+  },
+  "keywords": [
+    "Zotero-Categorise",
+    "Zotero",
+    "Zotero-Lib",
+    "Cli"
+  ],
+  "author": "OPEN DEVELOPMENT & EDUCATION",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OpenDevEd/Zotero-Categorise/issues"
+  },
+  "homepage": "https://github.com/OpenDevEd/Zotero-Categorise#readme"
 }
