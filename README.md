@@ -2,6 +2,28 @@
 
 A command-line tool to manage Zotero collections by placing items into specific collections based on their title, description, and tags.
 
+## Configuration
+
+To create a `zotero-cli.toml` file, follow these steps:
+
+1. Open the terminal and create the `zotero-cli.toml` file using the `nano` text editor:
+
+    ```bash
+    mkdir -p ~/.config/zotero-cli
+    nano ~/.config/zotero-cli/zotero-cli.toml
+    ```
+
+2. Inside the zotero-cli.toml file, add the following content:
+    ```
+    api-key = "YOUR_ZOTERO_API_KEY"
+    group-id = 123
+    library-type = "group"
+    indent = 4
+    ```
+
+
+
+
 ## Installation
 
 To use this tool, you need to have Node.js installed on your system. You can install the required dependencies and run the tool with the following steps:
