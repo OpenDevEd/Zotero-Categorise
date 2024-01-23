@@ -43,13 +43,13 @@ You can use the `collection` command to place items into collections.
 Here are the available options:
 
 ```
-npm start -- -c <collection> -i <item...>
+zotero-categorise collection -c <collection> -i <item...>
 ```
 
 or
 
 ```
-npm start -- -c zotero://select/groups/${Group-id}/collections/${CollectionId} -i zotero://select/Groups//${group-id}/items/${ItemId}
+zotero-categorise collection -c zotero://select/groups/${Group-id}/collections/${CollectionId} -i zotero://select/Groups//${group-id}/items/${ItemId}
 ```
 
 In this command, the option have this function:
@@ -73,7 +73,7 @@ Then by providing the collection id for 'Countries', items will be matched again
 The `generate` command allows you to create a JSON file that maps keywords to collections. This mapping is useful for automating the categorization process by periodically scanning your Zotero items.
 
 ```
-npm run generate -- -c [collection1] [collection2]
+zotero-categorise generate -- -c [collection1] [collection2]
 ```
 
 **Options:**
@@ -87,7 +87,7 @@ npm run generate -- -c [collection1] [collection2]
 The `collectionByJson` command enables you to categorize items from a JSON file into Zotero collections.
 
 ```
-npm run collectionByJson -- -j [json file] -i [item...]
+zotero-categorise collectionByJson -- -j [json file] -i [item...]
 ```
 
 **Options:**
