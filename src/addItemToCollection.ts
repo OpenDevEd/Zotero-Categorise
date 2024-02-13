@@ -73,11 +73,11 @@ async function addItemToCollection(
     for (const element of listCollections) {
       if (element.situation === 'already_exist') continue;
       for (const term of element.terms) {
-        const searchFor = term.toLowerCase();
+        const searchFor = new RegExp('\\b' + term + '\\b', 'i');
         const resultIncludes =
-          result.title.toLowerCase().includes(searchFor) ||
-          result.abstractNote.toLowerCase().includes(searchFor) ||
-          result.tags.some((tag: { tag: string }) => tag.tag.toLowerCase().includes(searchFor));
+          searchFor.test(result.title) ||
+          searchFor.test(result.abstractNote) ||
+          (result.tags && result.tags.some((tag) => searchFor.test(tag.tag)));
         if (resultIncludes) {
           element.situation = 'to_add';
           break;
