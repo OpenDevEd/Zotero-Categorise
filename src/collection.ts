@@ -1,4 +1,5 @@
 import Zotero from 'zotero-lib';
+import fs from 'fs';
 import { addItemToCollection } from './addItemToCollection';
 type CommanderOptions = {
   item: string[];
@@ -9,6 +10,7 @@ type CommanderOptions = {
   json?: string;
   ignoretag?: string;
   addtag?: string;
+  recursive?: boolean;
 };
 
 type Collection = {
@@ -17,12 +19,14 @@ type Collection = {
     key: string;
   };
   meta?: { numCollections: number; numItems: number };
+  children: Collection[];
 };
 
 type Options = {
   key: string[];
   top?: boolean;
   verbose?: boolean;
+  recursive?: boolean;
 };
 
 type ZoteroCollections = {
@@ -55,6 +59,7 @@ async function collection(commanderOptions: CommanderOptions) {
     top: false,
     key: [collectionId[0]],
     verbose: false,
+    recursive: commanderOptions.recursive,
   };
   const listCollections: ZoteroCollections = [];
   let result: Collection;
@@ -74,6 +79,20 @@ async function collection(commanderOptions: CommanderOptions) {
     if (result.meta?.numCollections == 0)
       throw new Error(`There is no sub collection in this collection ${collectionId[0]} please add a sub collection`);
 
+    async function addChildren(listCollections: any, parent: any) {
+      for (const child of parent.children) {
+        listCollections.push({
+          terms: [child.data.name],
+          collection: child.data.key,
+          collection_name: child.data.name,
+          situation: 'nothing',
+        });
+        if (child.children.length > 0) {
+          await addChildren(listCollections, child);
+        }
+      }
+      // console.log('child', parent.children[0].data.name);
+    }
     // fetch the sub collections
     const results: Collection[] = await zotero.collections(options);
     results.forEach(async (collectionkey: Collection) => {
@@ -83,7 +102,11 @@ async function collection(commanderOptions: CommanderOptions) {
         collection_name: collectionkey.data.name,
         situation: 'nothing',
       });
+      if (options.recursive && collectionkey.children.length > 0) {
+        await addChildren(listCollections, collectionkey);
+      }
     });
+    // fs.writeFileSync('listCollections.json', JSON.stringify(listCollections));
     const listCollectionsForOutput = listCollections.map((item) => [item.collection_name, item.collection]);
     FinalOutput += 'Subcollections :' + JSON.stringify(listCollectionsForOutput) + '\n';
     console.log('Subcollections :' + JSON.stringify(listCollectionsForOutput));
@@ -104,4 +127,4 @@ async function collection(commanderOptions: CommanderOptions) {
   }
 }
 
-export { collection, CommanderOptions};
+export { collection, CommanderOptions };
