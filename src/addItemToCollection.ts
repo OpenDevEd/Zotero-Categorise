@@ -28,24 +28,28 @@ async function addItemToCollection(
   listCollections: ZoteroCollections,
   testmode: boolean,
   FinalOutput: string,
-  ignoretag?: string,
-  addtag?: string
+  ignoretag: string[],
+  addtag?: string[]
 ) {
   let result: ZoterItem;
   try {
     result = await zotero.item({ key: itemId });
 
-    if (ignoretag) {
+    for (const ignore of ignoretag) {
       for (const elTag of result.tags) {
-        if (elTag.tag.toLowerCase() === ignoretag.toLowerCase()) {
-          FinalOutput += 'Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored' + '\n';
-          console.log('Item ' + itemId + ' has the tag ' + ignoretag + ' so it will be ignored');
+        if (elTag.tag.toLowerCase() === ignore.toLowerCase()) {
+          FinalOutput += 'Item ' + itemId + ' has the tag "' + ignore + '" so it will be ignored' + '\n';
+          console.log('Item ' + itemId + ' has the tag "' + ignore + '" so it will be ignored');
           return FinalOutput;
         }
       }
     }
-    if (addtag) {
-      result.tags.push({ tag: addtag });
+
+
+    if (addtag?.length) {
+      for (const ell of addtag) {
+        result.tags.push({ tag: ell });
+      }
       await zotero.update_item({
         key: itemId,
         json: { tags: result.tags },
@@ -54,6 +58,7 @@ async function addItemToCollection(
       FinalOutput += 'Add tag ' + addtag + ' to item ' + itemId + '\n';
       console.log('Add tag ' + addtag + ' to item ' + itemId);
     }
+
     FinalOutput += 'Get item data :' + itemId + '\n';
     console.log('Get item data :' + itemId);
     if (!result) throw new Error('not found');

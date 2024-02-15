@@ -8,8 +8,8 @@ type CommanderOptions = {
   test: boolean;
   name: string;
   json?: string;
-  ignoretag?: string;
-  addtag?: string;
+  ignoretag?: string[];
+  addtag?: string[];
   recursive?: boolean;
 };
 
@@ -41,8 +41,10 @@ async function collection(commanderOptions: CommanderOptions) {
   const itemId = commanderOptions.item;
   const collectionId = commanderOptions.collection;
   const testmode = commanderOptions.test;
-  const ignoretag = commanderOptions.ignoretag;
-  const addtag = commanderOptions.addtag;
+
+  const ignoretag = commanderOptions.ignoretag || [];
+  const addtag = commanderOptions.addtag || [];
+
   if (!itemId || !itemId.length || !collectionId) {
     console.log('Please provide an item, collection');
     return;

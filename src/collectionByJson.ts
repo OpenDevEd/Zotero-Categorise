@@ -6,7 +6,7 @@ import { addItemToCollection } from './addItemToCollection';
 type Subcollections = {
   collection_name: string;
   collection: string;
-  terms: { term: string; description: string }[];
+  terms: { term: string; description: string; type: string }[];
 };
 
 type ResCollection = {
@@ -18,6 +18,8 @@ type ResCollection = {
 type ResList = {
   library: string;
   source_collections: ResCollection[];
+  addtag: string[];
+  ignoretag: string[];
 };
 type CommanderOptions = {
   item: string[];
@@ -26,8 +28,8 @@ type CommanderOptions = {
   test: boolean;
   name: string;
   json?: string;
-  ignoretag?: string;
-  addtag?: string;
+  ignoretag?: string[];
+  addtag?: string[];
 };
 
 type ZoteroCollections = {
@@ -36,7 +38,6 @@ type ZoteroCollections = {
   collection_name: string;
   situation: string;
 }[];
-
 
 // this function is used to categorize items from a JSON file into Zotero collections
 async function generateByJSon(commanderOptions: CommanderOptions) {
@@ -66,8 +67,12 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     console.log('Please provide a json file with collections');
     return;
   }
-  const ignoretag = commanderOptions.ignoretag;
-  const addtag = commanderOptions.addtag;
+  if (commanderOptions.ignoretag) {
+    json.ignoretag = [...json.ignoretag, ...commanderOptions.ignoretag];
+  }
+  if (commanderOptions.addtag) {
+    json.addtag = [...json.addtag, ...commanderOptions.addtag];
+  }
   const testmode = commanderOptions.test;
 
   const resultcollcections: ZoteroCollections = [];
@@ -91,10 +96,18 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     }
   }
   let FinalOutput = '';
-  // add the items to the collections for each item 
+  // add the items to the collections for each item
   for (const item of itemId) {
     FinalOutput += '\n\nItem ' + item + ' :\n';
-    FinalOutput = await addItemToCollection(item, zotero, resultcollcections, testmode, FinalOutput, ignoretag, addtag);
+    FinalOutput = await addItemToCollection(
+      item,
+      zotero,
+      resultcollcections,
+      testmode,
+      FinalOutput,
+      json.ignoretag,
+      json.addtag
+    );
     for (const element of resultcollcections) {
       element.situation = 'nothing';
     }

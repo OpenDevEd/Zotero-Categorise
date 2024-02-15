@@ -27,8 +27,8 @@ program
   .option('-i, --item [item...]', 'Item Id to place in collection')
   .option('-g, --group <group>', 'Group Id to place item in')
   .option('-t, --test', 'test mode, do not actually place item in collection')
-  .option('--ignoretag <ignoretag>', 'Ignore Items with the Zotero tag')
-  .option('--addtag <addtag>', 'Add a tag to the item')
+  .option('--ignoretag [ignoretag...]', 'Ignore Items with the Zotero tag')
+  .option('--addtag [addtag...]', 'Add a tag to the item')
   .option('-r, --recursive', 'Recursively add subcollections to the list')
   .action(async (options: CommanderOptions) => {
     runner(collection, options);
@@ -51,8 +51,8 @@ program
   .option('-j, --json <json>', 'json file')
   .option('-i, --item [item...]', 'Item Id to place in collection')
   .option('-t, --test', 'test mode, do not actually place item in collection')
-  .option('--ignoretag <ignoretag>', 'Ignore Items with the Zotero tag')
-  .option('--addtag <addtag>', 'Add a tag to the item')
+  .option('--ignoretag [ignoretag...]', 'Ignore Items with the Zotero tags')
+  .option('--addtag [addtag...]', 'Add a tags to the item')
   .action(async (options: CommanderOptions) => {
     runner(generateByJSon, options);
   });

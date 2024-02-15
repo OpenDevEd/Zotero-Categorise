@@ -21,7 +21,7 @@ type Options = {
 type Collection = {
   collection_name: string;
   collection: string;
-  terms: [{ term: string; description: string }];
+  terms: [{ term: string; description: string; type: string }];
 };
 
 type ResCollection = {
@@ -33,6 +33,8 @@ type ResCollection = {
 type ResList = {
   library?: string;
   source_collections?: ResCollection[];
+  addtag?: string[];
+  ignoretag?: string[];
 };
 
 async function generate(commanderOptions: CommanderOptions) {
@@ -83,7 +85,7 @@ async function generate(commanderOptions: CommanderOptions) {
         collection.push({
           collection_name: child.data.name,
           collection: `zotero://select/groups/${list.library}/collections/${child.key}`,
-          terms: [{ term: child.data.name, description: 'main' }],
+          terms: [{ term: child.data.name, description: 'main', type: 'word' }],
         });
         if (child.children.length > 0) {
           addChildren(collection, child);
@@ -96,7 +98,7 @@ async function generate(commanderOptions: CommanderOptions) {
       collectionList.collections.push({
         collection_name: collectionkey.data.name,
         collection: `zotero://select/groups/${list.library}/collections/${collectionkey.key}`,
-        terms: [{ term: collectionkey.data.name, description: 'main' }],
+        terms: [{ term: collectionkey.data.name, description: 'main', type: 'word' }],
       });
       if (commanderOptions.recursive && collectionkey.children.length > 0) {
         await addChildren(collectionList.collections, collectionkey);
@@ -105,6 +107,8 @@ async function generate(commanderOptions: CommanderOptions) {
     }
     list.source_collections.push(collectionList);
   }
+  list.ignoretag = [];
+  list.addtag = [];
 
   const filename = commanderOptions.name;
   fs.writeFileSync(filename, JSON.stringify(list));
