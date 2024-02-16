@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { collection } from './collection';
 import Zotero from 'zotero-lib';
-import { addItemToCollection } from './addItemToCollection';
+import { ZoterItem, addItemToCollection } from './addItemToCollection';
 
 type Subcollections = {
   collection_name: string;
@@ -23,6 +23,9 @@ type ResList = {
 };
 type CommanderOptions = {
   item: string[];
+  itemsfromcollection: string;
+  itemswithtag: string;
+  itemsfromlibrary: boolean;
   collection: string[];
   group: string;
   test: boolean;
@@ -47,17 +50,33 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     return;
   }
 
-  const itemId = commanderOptions.item;
-  if (!itemId || !itemId.length) {
-    console.log('Please provide an item');
-    return;
-  }
   const groupid = commanderOptions.group;
   let zotero;
   if (groupid) {
     zotero = new Zotero({ verbose: false, 'group-id': groupid });
   } else {
     zotero = new Zotero({ verbose: false });
+  }
+
+  let items: (string | ZoterItem)[] = commanderOptions.item;
+  let fetched: { data: ZoterItem }[] = [];
+  const { itemsfromcollection, itemswithtag, itemsfromlibrary } = commanderOptions;
+
+  if (itemsfromcollection) {
+    fetched = await zotero.items({ collection: itemsfromcollection });
+  } else if (itemswithtag) {
+    fetched = await zotero.items({ tag: itemswithtag });
+  } else if (itemsfromlibrary) {
+    fetched = await zotero.items({});
+  }
+
+  if (fetched.length) {
+    items = fetched.map((item) => item.data);
+  }
+
+  if (!items || !items.length) {
+    console.log('Please provide an item');
+    return;
   }
 
   const jsonFile = commanderOptions.json;
@@ -97,8 +116,10 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
   }
   let FinalOutput = '';
   // add the items to the collections for each item
-  for (const item of itemId) {
-    FinalOutput += '\n\nItem ' + item + ' :\n';
+  for (const item of items) {
+    const id = typeof item === 'string' ? item : item.key;
+
+    FinalOutput += '\n\nItem ' + id + ' :\n';
     FinalOutput = await addItemToCollection(
       item,
       zotero,
