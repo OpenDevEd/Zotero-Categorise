@@ -16,7 +16,7 @@
     "lodash": "^4.17.21",
     "toml": "^3.0.0",
     "ts-node": "^10.9.1",
-    "zotero-lib": "file:../zotero-lib"
+    "zotero-lib": "^1.0.95"
   },
   "devDependencies": {
     "@types/node": "^20.6.3",
