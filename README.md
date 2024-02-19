@@ -8,21 +8,18 @@ To create a `zotero-cli.toml` file, follow these steps:
 
 1. Open the terminal and create the `zotero-cli.toml` file using the `nano` text editor:
 
-    ```bash
-    mkdir -p ~/.config/zotero-cli
-    nano ~/.config/zotero-cli/zotero-cli.toml
-    ```
+   ```bash
+   mkdir -p ~/.config/zotero-cli
+   nano ~/.config/zotero-cli/zotero-cli.toml
+   ```
 
 2. Inside the zotero-cli.toml file, add the following content:
-    ```
-    api-key = "YOUR_ZOTERO_API_KEY"
-    group-id = 123
-    library-type = "group"
-    indent = 4
-    ```
-
-
-
+   ```
+   api-key = "YOUR_ZOTERO_API_KEY"
+   group-id = 123
+   library-type = "group"
+   indent = 4
+   ```
 
 ## Installation
 
