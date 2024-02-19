@@ -5,6 +5,7 @@ type CommanderOptions = {
   item: string[];
   itemsfromcollection: string;
   itemswithtag: string;
+  itemswithouttag: string;
   itemsfromlibrary: boolean;
   collection: string[];
   group: string;
@@ -63,12 +64,14 @@ async function collection(commanderOptions: CommanderOptions) {
 
   let items: (string | ZoterItem)[] = itemId;
   let fetched: { data: ZoterItem }[] = [];
-  const { itemsfromcollection, itemswithtag, itemsfromlibrary } = commanderOptions;
+  const { itemsfromcollection, itemswithtag, itemswithouttag, itemsfromlibrary } = commanderOptions;
 
   if (itemsfromcollection) {
     fetched = await zotero.items({ collection: itemsfromcollection });
   } else if (itemswithtag) {
     fetched = await zotero.items({ tag: itemswithtag });
+  } else if (itemswithouttag) {
+    fetched = await zotero.items({ tag: `-${itemswithouttag}` });
   } else if (itemsfromlibrary) {
     fetched = await zotero.items({});
   }
