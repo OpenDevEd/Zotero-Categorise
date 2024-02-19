@@ -52,7 +52,6 @@ async function addItemToCollection(
       }
     }
 
-
     if (addtag?.length) {
       for (const ell of addtag) {
         result.tags.push({ tag: ell });
@@ -71,10 +70,11 @@ async function addItemToCollection(
     if (!result) throw new Error('not found');
     // check if the item is already in the collection
     for (const el of listCollections) {
-      if (result.collections.includes(getCollectionLetters(el.collection))) el.situation = 'already_exist';
+      if (!result.collections) el.situation = 'is_attachment';
+      else if (result.collections.includes(getCollectionLetters(el.collection))) el.situation = 'already_exist';
     }
     const alreadyCollections = listCollections.filter(
-      (item: { situation: string }) => item.situation === 'already_exist'
+      (item: { situation: string }) => item.situation === 'already_exist' || item.situation === 'is_attachment'
     );
     const alreadyCollectionsFiltered = alreadyCollections.map((item) => getCollectionLetters(item.collection));
     FinalOutput +=
