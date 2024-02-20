@@ -53,6 +53,10 @@ In this command, the option have this function:
 
 - `-c, --collection <collection>`: The id of a collection, which has sub-collections in which you want to place the items.
 - `-i, --item [item...]`: One or more Item Ids that you want to place in the collection.
+- `--itemsfromcollection <collection>`: Process items in the provided collection.
+- `--itemswithtag <tag>`: Process items with this tag.
+- `--itemswithouttag <tag>`: Process items that do not have this tag.
+- `--itemsfromlibrary`: Process all items in the library.
 
 For example, if your collection structure is this:
 
@@ -91,4 +95,8 @@ zotero-categorise collectionByJson -- -j [json file] -i [item...]
 
 - `-j, --json [json]`: Specifies the JSON file that contains the keyword-collection mapping.
 - `-i, --item [item...]`: One or more Item Ids that you want to categorize into collections.
+- `--itemsfromcollection <collection>`: Process items in the provided collection.
+- `--itemswithtag <tag>`: Process items with this tag.
+- `--itemswithouttag <tag>`: Process items that do not have this tag.
+- `--itemsfromlibrary`: Process all items in the library.
 - `-t, --test`: Use test mode, which does not actually place items in the collection. This is useful for verification and testing.
