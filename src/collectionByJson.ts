@@ -51,6 +51,19 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     return;
   }
 
+  const { itemsfromcollection, itemswithtag, itemswithouttag, itemsfromlibrary } = commanderOptions;
+  const itemOptions = [commanderOptions.item, itemsfromcollection, itemswithtag, itemswithouttag, itemsfromlibrary];
+
+  if (itemOptions.filter(Boolean).length > 1) {
+    console.log('Only one of these options should be used at a time:');
+    console.log('--item');
+    console.log('--itemsfromcollection');
+    console.log('--itemswithtag');
+    console.log('--itemswithouttag');
+    console.log('--itemsfromlibrary');
+    return;
+  }
+
   const groupid = commanderOptions.group;
   let zotero;
   if (groupid) {
@@ -61,7 +74,6 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
 
   let items: (string | ZoterItem)[] = commanderOptions.item;
   let fetched: { data: ZoterItem }[] = [];
-  const { itemsfromcollection, itemswithtag, itemswithouttag, itemsfromlibrary } = commanderOptions;
 
   if (itemsfromcollection) {
     fetched = await zotero.items({ collection: itemsfromcollection });
