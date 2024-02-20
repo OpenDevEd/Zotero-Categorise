@@ -69,9 +69,9 @@ async function collection(commanderOptions: CommanderOptions) {
   if (itemsfromcollection) {
     fetched = await zotero.items({ collection: itemsfromcollection });
   } else if (itemswithtag) {
-    fetched = await zotero.items({ tag: itemswithtag });
+    fetched = await zotero.items({ filter: { tag: itemswithtag } });
   } else if (itemswithouttag) {
-    fetched = await zotero.items({ tag: `-${itemswithouttag}` });
+    fetched = await zotero.items({ filter: { tag: `-${itemswithouttag}` } });
   } else if (itemsfromlibrary) {
     fetched = await zotero.items({});
   }
