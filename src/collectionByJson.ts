@@ -78,7 +78,7 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
   }
 
   if (!items || !items.length) {
-    console.log('Please provide an item');
+    console.log('No items to process');
     return;
   }
 
