@@ -8,7 +8,7 @@ type ZoterItem = {
 };
 
 type ZoteroCollections = {
-  terms: string[];
+  terms: { term: string; type: string }[];
   collection: string;
   collection_name: string;
   situation: string;
@@ -45,7 +45,6 @@ async function addItemToCollection(
       }
     }
 
-
     if (addtag?.length) {
       for (const ell of addtag) {
         result.tags.push({ tag: ell });
@@ -78,7 +77,15 @@ async function addItemToCollection(
     for (const element of listCollections) {
       if (element.situation === 'already_exist') continue;
       for (const term of element.terms) {
-        const searchFor = new RegExp('\\b' + term + '\\b', 'i');
+        let searchFor: RegExp;
+        if (term.type === 'word') searchFor = new RegExp('\\b' + term.term + '\\b', 'i'); // \b is for word boundary
+        else if (term.type === 'regex') searchFor = new RegExp(term.term, 'i');
+        else if (term.type === 'words') {
+          // make the regex for the words
+          const parts = term.term.split('/');
+          const regex = parts[0] + '(?:' + parts.slice(1).join('|') + '?)';
+          searchFor = new RegExp('\\b' + regex + '\\b', 'i');
+        } else searchFor = new RegExp('\\b' + term.term + '\\b', 'i');
         const resultIncludes =
           searchFor.test(result.title) ||
           searchFor.test(result.abstractNote) ||

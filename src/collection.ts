@@ -30,7 +30,7 @@ type Options = {
 };
 
 type ZoteroCollections = {
-  terms: string[];
+  terms: { term: string; type: string }[];
   collection: string;
   collection_name: string;
   situation: string;
@@ -84,7 +84,7 @@ async function collection(commanderOptions: CommanderOptions) {
     async function addChildren(listCollections: any, parent: any) {
       for (const child of parent.children) {
         listCollections.push({
-          terms: [child.data.name],
+          terms: [{ term: child.data.name, type: 'word' }],
           collection: child.data.key,
           collection_name: child.data.name,
           situation: 'nothing',
@@ -99,7 +99,7 @@ async function collection(commanderOptions: CommanderOptions) {
     const results: Collection[] = await zotero.collections(options);
     results.forEach(async (collectionkey: Collection) => {
       listCollections.push({
-        terms: [collectionkey.data.name],
+        terms: [{ term: collectionkey.data.name, type: 'word' }],
         collection: collectionkey.data.key,
         collection_name: collectionkey.data.name,
         situation: 'nothing',

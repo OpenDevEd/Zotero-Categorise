@@ -33,7 +33,7 @@ type CommanderOptions = {
 };
 
 type ZoteroCollections = {
-  terms: string[];
+  terms: { term: string; type: string }[];
   collection: string;
   collection_name: string;
   situation: string;
@@ -82,9 +82,9 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     if (!element.collections) continue;
 
     for (const collle of element.collections) {
-      const termsList: string[] = [];
+      const termsList: { term: string; type: string }[] = [];
       for (const term of collle.terms) {
-        termsList.push(term.term);
+        termsList.push({ term: term.term, type: term.type });
       }
 
       resultcollcections.push({
