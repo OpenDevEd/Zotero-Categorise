@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { collection } from './collection';
 import Zotero from 'zotero-lib';
-import { ZoterItem, addItemToCollection } from './addItemToCollection';
+import { ZoteroItem, addItemToCollection } from './addItemToCollection';
 
 type Subcollections = {
   collection_name: string;
@@ -72,8 +72,8 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     zotero = new Zotero({ verbose: false });
   }
 
-  let items: (string | ZoterItem)[] = commanderOptions.item;
-  let fetched: { data: ZoterItem }[] = [];
+  let items: (string | ZoteroItem)[] = commanderOptions.item;
+  let fetched: { data: ZoteroItem }[] = [];
 
   if (itemsfromcollection) {
     fetched = await zotero.items({ collection: itemsfromcollection });

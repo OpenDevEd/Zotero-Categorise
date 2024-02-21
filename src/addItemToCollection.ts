@@ -1,6 +1,6 @@
 import Zotero from 'zotero-lib';
 
-export type ZoterItem = {
+export type ZoteroItem = {
   key: string;
   title: string;
   abstractNote: string;
@@ -24,7 +24,7 @@ function getCollectionLetters(collection: string) {
 }
 
 async function addItemToCollection(
-  item: string | ZoterItem,
+  item: string | ZoteroItem,
   zotero: Zotero,
   listCollections: ZoteroCollections,
   testmode: boolean,
@@ -32,7 +32,7 @@ async function addItemToCollection(
   ignoretag: string[],
   addtag?: string[]
 ) {
-  let result: ZoterItem;
+  let result: ZoteroItem;
   let itemId = typeof item === 'string' ? item : item.key;
 
   try {

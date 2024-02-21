@@ -1,6 +1,6 @@
 import Zotero from 'zotero-lib';
 import fs from 'fs';
-import { ZoterItem, addItemToCollection } from './addItemToCollection';
+import { ZoteroItem, addItemToCollection } from './addItemToCollection';
 type CommanderOptions = {
   item: string[];
   itemsfromcollection: string;
@@ -75,8 +75,8 @@ async function collection(commanderOptions: CommanderOptions) {
     zotero = new Zotero({ verbose: false });
   }
 
-  let items: (string | ZoterItem)[] = itemId;
-  let fetched: { data: ZoterItem }[] = [];
+  let items: (string | ZoteroItem)[] = itemId;
+  let fetched: { data: ZoteroItem }[] = [];
 
   if (itemsfromcollection) {
     fetched = await zotero.items({ collection: itemsfromcollection });
