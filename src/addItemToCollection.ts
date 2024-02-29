@@ -1,6 +1,7 @@
 import Zotero from 'zotero-lib';
 
-type ZoterItem = {
+export type ZoteroItem = {
+  key: string;
   title: string;
   abstractNote: string;
   tags: [{ tag: string }];
@@ -23,7 +24,7 @@ function getCollectionLetters(collection: string) {
 }
 
 async function addItemToCollection(
-  itemId: string,
+  item: string | ZoteroItem,
   zotero: Zotero,
   listCollections: ZoteroCollections,
   testmode: boolean,
@@ -31,9 +32,15 @@ async function addItemToCollection(
   ignoretag: string[],
   addtag?: string[]
 ) {
-  let result: ZoterItem;
+  let result: ZoteroItem;
+  let itemId = typeof item === 'string' ? item : item.key;
+
   try {
-    result = await zotero.item({ key: itemId });
+    if (typeof item === 'string') {
+      result = await zotero.item({ key: item });
+    } else {
+      result = item;
+    }
 
     for (const ignore of ignoretag) {
       for (const elTag of result.tags) {
@@ -63,10 +70,11 @@ async function addItemToCollection(
     if (!result) throw new Error('not found');
     // check if the item is already in the collection
     for (const el of listCollections) {
-      if (result.collections.includes(getCollectionLetters(el.collection))) el.situation = 'already_exist';
+      if (!result.collections) el.situation = 'is_attachment';
+      else if (result.collections.includes(getCollectionLetters(el.collection))) el.situation = 'already_exist';
     }
     const alreadyCollections = listCollections.filter(
-      (item: { situation: string }) => item.situation === 'already_exist'
+      (item: { situation: string }) => item.situation === 'already_exist' || item.situation === 'is_attachment'
     );
     const alreadyCollectionsFiltered = alreadyCollections.map((item) => getCollectionLetters(item.collection));
     FinalOutput +=

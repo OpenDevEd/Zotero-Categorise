@@ -1,8 +1,12 @@
 import Zotero from 'zotero-lib';
 import fs from 'fs';
-import { addItemToCollection } from './addItemToCollection';
+import { ZoteroItem, addItemToCollection } from './addItemToCollection';
 type CommanderOptions = {
   item: string[];
+  itemsfromcollection: string;
+  itemswithtag: string;
+  itemswithouttag: string;
+  itemsfromlibrary: boolean;
   collection: string[];
   group: string;
   test: boolean;
@@ -45,16 +49,52 @@ async function collection(commanderOptions: CommanderOptions) {
   const ignoretag = commanderOptions.ignoretag || [];
   const addtag = commanderOptions.addtag || [];
 
-  if (!itemId || !itemId.length || !collectionId) {
-    console.log('Please provide an item, collection');
+  if (!collectionId) {
+    console.log('Please provide a collection');
     return;
   }
+
+  const { itemsfromcollection, itemswithtag, itemswithouttag, itemsfromlibrary } = commanderOptions;
+  const itemOptions = [itemId, itemsfromcollection, itemswithtag, itemswithouttag, itemsfromlibrary];
+
+  if (itemOptions.filter(Boolean).length > 1) {
+    console.log('Only one of these options should be used at a time:');
+    console.log('--item');
+    console.log('--itemsfromcollection');
+    console.log('--itemswithtag');
+    console.log('--itemswithouttag');
+    console.log('--itemsfromlibrary');
+    return;
+  }
+
   const groupid = commanderOptions.group;
   let zotero;
   if (groupid) {
     zotero = new Zotero({ verbose: false, 'group-id': groupid });
   } else {
     zotero = new Zotero({ verbose: false });
+  }
+
+  let items: (string | ZoteroItem)[] = itemId;
+  let fetched: { data: ZoteroItem }[] = [];
+
+  if (itemsfromcollection) {
+    fetched = await zotero.items({ collection: itemsfromcollection });
+  } else if (itemswithtag) {
+    fetched = await zotero.items({ filter: { tag: itemswithtag } });
+  } else if (itemswithouttag) {
+    fetched = await zotero.items({ filter: { tag: `-${itemswithouttag}` } });
+  } else if (itemsfromlibrary) {
+    fetched = await zotero.items({});
+  }
+
+  if (fetched.length) {
+    items = fetched.map((item) => item.data);
+  }
+
+  if (!items || !items.length) {
+    console.log('No items to process');
+    return;
   }
 
   const options: Options = {
@@ -117,7 +157,7 @@ async function collection(commanderOptions: CommanderOptions) {
   }
   if (!listCollections.length) return;
 
-  for (const item of itemId) {
+  for (const item of items) {
     // add item to collection
     FinalOutput = await addItemToCollection(item, zotero, listCollections, testmode, FinalOutput, ignoretag, addtag);
     for (const element of listCollections) {
