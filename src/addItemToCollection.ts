@@ -26,20 +26,15 @@ function getCollectionLetters(collection: string) {
 async function addItemToCollection(
   item: string | ZoteroItem,
   zotero: Zotero,
+  matchfield: string[],
   listCollections: ZoteroCollections,
   testmode: boolean,
   FinalOutput: string,
   ignoretag: string[],
-  addtag?: string[],
-  matchfield?: string[]
+  addtag?: string[]
 ) {
   let result: ZoteroItem;
   let itemId = typeof item === 'string' ? item : item.key;
-
-  // default matchfields
-  if (!matchfield || matchfield.includes('all')) {
-    matchfield = ['title', 'tags', 'description'];
-  }
 
   try {
     if (typeof item === 'string') {

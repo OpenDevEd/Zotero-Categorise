@@ -65,7 +65,13 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     return;
   }
 
-  const matchfield = commanderOptions.matchfield?.split(',');
+  let matchfield = commanderOptions.matchfield?.split(',');
+
+  // default matchfields
+  if (!matchfield || matchfield.includes('all')) {
+    matchfield = ['title', 'tags', 'description'];
+  }
+
   const groupid = commanderOptions.group;
   let zotero;
   if (groupid) {
@@ -140,12 +146,12 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     FinalOutput = await addItemToCollection(
       item,
       zotero,
+      matchfield,
       resultcollcections,
       testmode,
       FinalOutput,
       json.ignoretag,
-      json.addtag,
-      matchfield
+      json.addtag
     );
     for (const element of resultcollcections) {
       element.situation = 'nothing';

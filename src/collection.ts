@@ -46,9 +46,14 @@ async function collection(commanderOptions: CommanderOptions) {
   const itemId = commanderOptions.item;
   const collectionId = commanderOptions.collection;
   const testmode = commanderOptions.test;
-  const matchfield = commanderOptions.matchfield?.split(',');
+  let matchfield = commanderOptions.matchfield?.split(',');
   const ignoretag = commanderOptions.ignoretag || [];
   const addtag = commanderOptions.addtag || [];
+
+  // default matchfields
+  if (!matchfield || matchfield.includes('all')) {
+    matchfield = ['title', 'tags', 'description'];
+  }
 
   if (!collectionId) {
     console.log('Please provide a collection');
@@ -163,12 +168,12 @@ async function collection(commanderOptions: CommanderOptions) {
     FinalOutput = await addItemToCollection(
       item,
       zotero,
+      matchfield,
       listCollections,
       testmode,
       FinalOutput,
       ignoretag,
-      addtag,
-      matchfield
+      addtag
     );
     for (const element of listCollections) {
       element.situation = 'nothing';
