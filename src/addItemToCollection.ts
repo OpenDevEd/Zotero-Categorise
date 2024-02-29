@@ -30,10 +30,16 @@ async function addItemToCollection(
   testmode: boolean,
   FinalOutput: string,
   ignoretag: string[],
-  addtag?: string[]
+  addtag?: string[],
+  matchfield?: string[]
 ) {
   let result: ZoteroItem;
   let itemId = typeof item === 'string' ? item : item.key;
+
+  // default matchfields
+  if (!matchfield || matchfield.includes('all')) {
+    matchfield = ['title', 'tags', 'description'];
+  }
 
   try {
     if (typeof item === 'string') {
@@ -95,9 +101,9 @@ async function addItemToCollection(
           searchFor = new RegExp('\\b' + regex + '\\b', 'i');
         } else searchFor = new RegExp('\\b' + term.term + '\\b', 'i');
         const resultIncludes =
-          searchFor.test(result.title) ||
-          searchFor.test(result.abstractNote) ||
-          (result.tags && result.tags.some((tag) => searchFor.test(tag.tag)));
+          (matchfield.includes('title') && searchFor.test(result.title)) ||
+          (matchfield.includes('description') && searchFor.test(result.abstractNote)) ||
+          (matchfield.includes('tags') && result.tags && result.tags.some((tag) => searchFor.test(tag.tag)));
         if (resultIncludes) {
           element.situation = 'to_add';
           break;

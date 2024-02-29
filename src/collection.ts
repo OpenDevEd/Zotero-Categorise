@@ -7,6 +7,7 @@ type CommanderOptions = {
   itemswithtag: string;
   itemswithouttag: string;
   itemsfromlibrary: boolean;
+  matchfield?: string;
   collection: string[];
   group: string;
   test: boolean;
@@ -45,7 +46,7 @@ async function collection(commanderOptions: CommanderOptions) {
   const itemId = commanderOptions.item;
   const collectionId = commanderOptions.collection;
   const testmode = commanderOptions.test;
-
+  const matchfield = commanderOptions.matchfield?.split(',');
   const ignoretag = commanderOptions.ignoretag || [];
   const addtag = commanderOptions.addtag || [];
 
@@ -159,7 +160,16 @@ async function collection(commanderOptions: CommanderOptions) {
 
   for (const item of items) {
     // add item to collection
-    FinalOutput = await addItemToCollection(item, zotero, listCollections, testmode, FinalOutput, ignoretag, addtag);
+    FinalOutput = await addItemToCollection(
+      item,
+      zotero,
+      listCollections,
+      testmode,
+      FinalOutput,
+      ignoretag,
+      addtag,
+      matchfield
+    );
     for (const element of listCollections) {
       element.situation = 'nothing';
     }

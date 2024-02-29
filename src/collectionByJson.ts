@@ -27,6 +27,7 @@ type CommanderOptions = {
   itemswithtag: string;
   itemswithouttag: string;
   itemsfromlibrary: boolean;
+  matchfield?: string;
   collection: string[];
   group: string;
   test: boolean;
@@ -64,6 +65,7 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     return;
   }
 
+  const matchfield = commanderOptions.matchfield?.split(',');
   const groupid = commanderOptions.group;
   let zotero;
   if (groupid) {
@@ -142,7 +144,8 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
       testmode,
       FinalOutput,
       json.ignoretag,
-      json.addtag
+      json.addtag,
+      matchfield
     );
     for (const element of resultcollcections) {
       element.situation = 'nothing';
