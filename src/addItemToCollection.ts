@@ -92,7 +92,8 @@ async function addItemToCollection(
       if (element.situation === 'already_exist') continue;
       for (const term of element.terms) {
         let searchFor: RegExp;
-        if (term.type === 'word') searchFor = new RegExp('\\b' + term.term + '\\b', 'i'); // \b is for word boundary
+        if (term.type === 'word')
+          searchFor = new RegExp('\\b' + term.term + '\\b', 'i'); // \b is for word boundary
         else if (term.type === 'regex') searchFor = new RegExp(term.term, 'i');
         else if (term.type === 'words') {
           // make the regex for the words
