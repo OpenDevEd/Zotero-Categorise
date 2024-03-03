@@ -43,9 +43,10 @@ npm link
 If you do that, you can use `zotero-categorise` below.
 
 ## Usage
-Help:
+Help works in the usual way
 ```
 zotero-categorise
+zotero-categorise -h
 zotero-categorise collection -h
 zotero-categorise generate -h
 zotero-categorise collectionByJson -h
