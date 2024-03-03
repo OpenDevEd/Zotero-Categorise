@@ -46,7 +46,12 @@ If you do that, you can use `zotero-categorise` below.
 Help:
 ```
 zotero-categorise
+zotero-categorise collection -h
+zotero-categorise generate -h
+zotero-categorise collectionByJson -h
 ```
+
+### The `collection` command
 You can use the `collection` command to place items into collections.
 
 Here are the available options:
