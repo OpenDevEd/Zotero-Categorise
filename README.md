@@ -33,6 +33,14 @@ cd Zotero-Categorise
 npm install
 ```
 
+### Binary
+
+The package includes a binary `zotero-categorise`. You can install this with 
+```
+npm link
+```
+If you do that, you can use `zotero-categorise` below.
+
 ## Usage
 
 You can use the `collection` command to place items into collections.
