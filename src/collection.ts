@@ -1,13 +1,15 @@
 import Zotero from 'zotero-lib';
 import fs from 'fs';
 import { ZoteroItem, addItemToCollection } from './addItemToCollection';
+import { validateMatchfield } from './utils/validateParameters';
+
 type CommanderOptions = {
   item: string[];
   itemsfromcollection: string;
   itemswithtag: string;
   itemswithouttag: string;
   itemsfromlibrary: boolean;
-  matchfield?: string;
+  matchfield?: string[];
   collection: string[];
   group: string;
   test: boolean;
@@ -46,14 +48,9 @@ async function collection(commanderOptions: CommanderOptions) {
   const itemId = commanderOptions.item;
   const collectionId = commanderOptions.collection;
   const testmode = commanderOptions.test;
-  let matchfield = commanderOptions.matchfield?.split(',');
+  const matchfield = validateMatchfield(commanderOptions.matchfield);
   const ignoretag = commanderOptions.ignoretag || [];
   const addtag = commanderOptions.addtag || [];
-
-  // default matchfields
-  if (!matchfield || matchfield.includes('all')) {
-    matchfield = ['title', 'tags', 'description'];
-  }
 
   if (!collectionId) {
     console.log('Please provide a collection');

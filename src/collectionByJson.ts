@@ -2,6 +2,7 @@ import fs from 'fs';
 import { collection } from './collection';
 import Zotero from 'zotero-lib';
 import { ZoteroItem, addItemToCollection } from './addItemToCollection';
+import { validateMatchfield } from './utils/validateParameters';
 
 type Subcollections = {
   collection_name: string;
@@ -27,7 +28,7 @@ type CommanderOptions = {
   itemswithtag: string;
   itemswithouttag: string;
   itemsfromlibrary: boolean;
-  matchfield?: string;
+  matchfield?: string[];
   collection: string[];
   group: string;
   test: boolean;
@@ -65,12 +66,7 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     return;
   }
 
-  let matchfield = commanderOptions.matchfield?.split(',');
-
-  // default matchfields
-  if (!matchfield || matchfield.includes('all')) {
-    matchfield = ['title', 'tags', 'description'];
-  }
+  const matchfield = validateMatchfield(commanderOptions.matchfield);
 
   const groupid = commanderOptions.group;
   let zotero;
