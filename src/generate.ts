@@ -100,7 +100,8 @@ async function generate(commanderOptions: CommanderOptions) {
         collection: `zotero://select/groups/${list.library}/collections/${collectionkey.key}`,
         terms: [{ term: collectionkey.data.name, description: 'main', type: 'word' }],
       });
-      if (commanderOptions.recursive && collectionkey.children.length > 0) {
+
+      if (commanderOptions.recursive && collectionkey.children?.length > 0) {
         await addChildren(collectionList.collections, collectionkey);
       }
       console.log(collectionkey.data);

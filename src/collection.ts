@@ -144,7 +144,8 @@ async function collection(commanderOptions: CommanderOptions) {
         collection_name: collectionkey.data.name,
         situation: 'nothing',
       });
-      if (options.recursive && collectionkey.children.length > 0) {
+      
+      if (options.recursive && collectionkey.children?.length > 0) {
         await addChildren(listCollections, collectionkey);
       }
     });
