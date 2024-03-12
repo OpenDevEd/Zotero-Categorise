@@ -102,10 +102,11 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     return;
   }
   if (commanderOptions.ignoretag) {
-    json.ignoretag = [...json.ignoretag, ...commanderOptions.ignoretag];
+    json.ignoretag = [...(json.ignoretag || []), ...commanderOptions.ignoretag];
   }
+
   if (commanderOptions.addtag) {
-    json.addtag = [...json.addtag, ...commanderOptions.addtag];
+    json.addtag = [...(json.addtag || []), ...commanderOptions.addtag];
   }
   const testmode = commanderOptions.test;
 

@@ -33,7 +33,7 @@
   },
   "name": "zotero-categorise",
   "description": "A command-line tool to manage Zotero collections by placing items into specific collections based on their title, description, and tags.",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "bin": {
     "zotero-categorise": "./dist/index.js"
