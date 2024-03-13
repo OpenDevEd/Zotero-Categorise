@@ -26,6 +26,7 @@ function getCollectionLetters(collection: string) {
 async function addItemToCollection(
   item: string | ZoteroItem,
   zotero: Zotero,
+  matchfield: string[],
   listCollections: ZoteroCollections,
   testmode: boolean,
   FinalOutput: string,
@@ -86,7 +87,8 @@ async function addItemToCollection(
       if (element.situation === 'already_exist') continue;
       for (const term of element.terms) {
         let searchFor: RegExp;
-        if (term.type === 'word') searchFor = new RegExp('\\b' + term.term + '\\b', 'i'); // \b is for word boundary
+        if (term.type === 'word')
+          searchFor = new RegExp('\\b' + term.term + '\\b', 'i'); // \b is for word boundary
         else if (term.type === 'regex') searchFor = new RegExp(term.term, 'i');
         else if (term.type === 'words') {
           // make the regex for the words
@@ -95,9 +97,9 @@ async function addItemToCollection(
           searchFor = new RegExp('\\b' + regex + '\\b', 'i');
         } else searchFor = new RegExp('\\b' + term.term + '\\b', 'i');
         const resultIncludes =
-          searchFor.test(result.title) ||
-          searchFor.test(result.abstractNote) ||
-          (result.tags && result.tags.some((tag) => searchFor.test(tag.tag)));
+          (matchfield.includes('title') && searchFor.test(result.title)) ||
+          (matchfield.includes('description') && searchFor.test(result.abstractNote)) ||
+          (matchfield.includes('tags') && result.tags && result.tags.some((tag) => searchFor.test(tag.tag)));
         if (resultIncludes) {
           element.situation = 'to_add';
           break;

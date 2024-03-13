@@ -1,12 +1,15 @@
 import Zotero from 'zotero-lib';
 import fs from 'fs';
 import { ZoteroItem, addItemToCollection } from './addItemToCollection';
+import { validateMatchfield } from './utils/validateParameters';
+
 type CommanderOptions = {
   item: string[];
   itemsfromcollection: string;
   itemswithtag: string;
   itemswithouttag: string;
   itemsfromlibrary: boolean;
+  matchfield?: string[];
   collection: string[];
   group: string;
   test: boolean;
@@ -45,7 +48,7 @@ async function collection(commanderOptions: CommanderOptions) {
   const itemId = commanderOptions.item;
   const collectionId = commanderOptions.collection;
   const testmode = commanderOptions.test;
-
+  const matchfield = validateMatchfield(commanderOptions.matchfield);
   const ignoretag = commanderOptions.ignoretag || [];
   const addtag = commanderOptions.addtag || [];
 
@@ -160,7 +163,16 @@ async function collection(commanderOptions: CommanderOptions) {
 
   for (const item of items) {
     // add item to collection
-    FinalOutput = await addItemToCollection(item, zotero, listCollections, testmode, FinalOutput, ignoretag, addtag);
+    FinalOutput = await addItemToCollection(
+      item,
+      zotero,
+      matchfield,
+      listCollections,
+      testmode,
+      FinalOutput,
+      ignoretag,
+      addtag
+    );
     for (const element of listCollections) {
       element.situation = 'nothing';
     }

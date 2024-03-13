@@ -2,6 +2,7 @@ import fs from 'fs';
 import { collection } from './collection';
 import Zotero from 'zotero-lib';
 import { ZoteroItem, addItemToCollection } from './addItemToCollection';
+import { validateMatchfield } from './utils/validateParameters';
 
 type Subcollections = {
   collection_name: string;
@@ -27,6 +28,7 @@ type CommanderOptions = {
   itemswithtag: string;
   itemswithouttag: string;
   itemsfromlibrary: boolean;
+  matchfield?: string[];
   collection: string[];
   group: string;
   test: boolean;
@@ -63,6 +65,8 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     console.log('--itemsfromlibrary');
     return;
   }
+
+  const matchfield = validateMatchfield(commanderOptions.matchfield);
 
   const groupid = commanderOptions.group;
   let zotero;
@@ -139,6 +143,7 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     FinalOutput = await addItemToCollection(
       item,
       zotero,
+      matchfield,
       resultcollcections,
       testmode,
       FinalOutput,

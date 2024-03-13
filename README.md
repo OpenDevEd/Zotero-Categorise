@@ -75,6 +75,7 @@ In this command, the option have this function:
 - `--itemswithtag <tag>`: Process items with this tag.
 - `--itemswithouttag <tag>`: Process items that do not have this tag.
 - `--itemsfromlibrary`: Process all items in the library.
+- `--matchfield <fields>`: Fields to match. Can be one or more of title, tags, description or all, separated by commas.
 
 For example, if your collection structure is this:
 
@@ -117,4 +118,5 @@ zotero-categorise collectionByJson -- -j [json file] -i [item...]
 - `--itemswithtag <tag>`: Process items with this tag.
 - `--itemswithouttag <tag>`: Process items that do not have this tag.
 - `--itemsfromlibrary`: Process all items in the library.
+- `--matchfield <fields>`: Fields to match. Can be one or more of title, tags, description or all, separated by commas.
 - `-t, --test`: Use test mode, which does not actually place items in the collection. This is useful for verification and testing.
