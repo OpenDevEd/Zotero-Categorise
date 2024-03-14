@@ -1,49 +1,10 @@
 import fs from 'fs';
 import { collection } from './collection';
 import Zotero from 'zotero-lib';
-import { ZoteroItem, addItemToCollection } from './addItemToCollection';
+import { addItemToCollection } from './addItemToCollection';
 import { validateMatchfield } from './utils/validateParameters';
-
-type Subcollections = {
-  collection_name: string;
-  collection: string;
-  terms: { term: string; description: string; type: string }[];
-};
-
-type ResCollection = {
-  collections?: Subcollections[];
-  source_collection: string;
-  source_collection_name?: string;
-};
-
-type ResList = {
-  library: string;
-  source_collections: ResCollection[];
-  addtag: string[];
-  ignoretag: string[];
-};
-type CommanderOptions = {
-  item: string[];
-  itemsfromcollection: string;
-  itemswithtag: string;
-  itemswithouttag: string;
-  itemsfromlibrary: boolean;
-  matchfield?: string[];
-  collection: string[];
-  group: string;
-  test: boolean;
-  name: string;
-  json?: string;
-  ignoretag?: string[];
-  addtag?: string[];
-};
-
-type ZoteroCollections = {
-  terms: { term: string; type: string }[];
-  collection: string;
-  collection_name: string;
-  situation: string;
-}[];
+import { CommanderOptions, ResList, ZoteroCollections } from './types/collectionByJson';
+import { ZoteroItem } from './types/addItemToCollection';
 
 // this function is used to categorize items from a JSON file into Zotero collections
 async function generateByJSon(commanderOptions: CommanderOptions) {

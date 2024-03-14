@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { generate } from './generate';
-import { collection, CommanderOptions } from './collection';
+import { collection } from './collection';
 import { generateByJSon } from './collectionByJson';
+import { CommanderOptions } from 'types/collection';
 
 const program = new Command();
 

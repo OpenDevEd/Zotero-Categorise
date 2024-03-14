@@ -1,19 +1,5 @@
 import Zotero from 'zotero-lib';
-
-export type ZoteroItem = {
-  key: string;
-  title: string;
-  abstractNote: string;
-  tags: [{ tag: string }];
-  collections: string[];
-};
-
-type ZoteroCollections = {
-  terms: { term: string; type: string }[];
-  collection: string;
-  collection_name: string;
-  situation: string;
-}[];
+import { ZoteroCollections, ZoteroItem } from './types/addItemToCollection';
 
 function getCollectionLetters(collection: string) {
   if (collection.includes('/')) {

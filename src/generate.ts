@@ -1,41 +1,6 @@
 import Zotero from 'zotero-lib';
 import fs from 'fs';
-
-type CommanderOptions = {
-  item: string[];
-  collection: string[];
-  group: string;
-  test: boolean;
-  name: string;
-  json?: string;
-  recursive?: boolean;
-};
-
-type Options = {
-  key: string[];
-  top?: boolean;
-  verbose?: boolean;
-  recursive?: boolean;
-};
-
-type Collection = {
-  collection_name: string;
-  collection: string;
-  terms: [{ term: string; description: string; type: string }];
-};
-
-type ResCollection = {
-  collections?: Collection[];
-  source_collection?: string;
-  source_collection_name?: string;
-};
-
-type ResList = {
-  library?: string;
-  source_collections?: ResCollection[];
-  addtag?: string[];
-  ignoretag?: string[];
-};
+import { Collection, CommanderOptions, Options, ResCollection, ResList } from './types/generate';
 
 async function generate(commanderOptions: CommanderOptions) {
   let zotero: Zotero;
