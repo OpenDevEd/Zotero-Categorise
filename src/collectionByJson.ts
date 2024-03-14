@@ -6,7 +6,12 @@ import { validateMatchfield } from './utils/validateParameters';
 import { CommanderOptions, ResList, ZoteroCollections } from './types/collectionByJson';
 import { ZoteroItem } from './types/addItemToCollection';
 
-// this function is used to categorize items from a JSON file into Zotero collections
+/**
+ * Categorizes items from a JSON file into Zotero collections based on the provided options.
+ *
+ * @param {CommanderOptions} commanderOptions - The options passed from commander.
+ * @returns {Promise<void>} - A Promise that resolves when the operation is finished.
+ */
 async function generateByJSon(commanderOptions: CommanderOptions) {
   // check if the user provided a json file
   if (!commanderOptions.json) {

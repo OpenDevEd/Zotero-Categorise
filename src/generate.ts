@@ -2,6 +2,12 @@ import Zotero from 'zotero-lib';
 import fs from 'fs';
 import { Collection, CommanderOptions, Options, ResCollection, ResList } from './types/generate';
 
+/**
+ * Generates a list of collections and subcollections from Zotero based on the provided options.
+ *
+ * @param {CommanderOptions} commanderOptions - The options passed from commander.
+ * @returns {Promise<void>} - A Promise that resolves when the operation is finished.
+ */
 async function generate(commanderOptions: CommanderOptions) {
   let zotero: Zotero;
   const groupid = commanderOptions.group;

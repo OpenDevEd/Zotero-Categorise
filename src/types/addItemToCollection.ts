@@ -1,3 +1,6 @@
+/**
+ * Type representing a Zotero item.
+ */
 export type ZoteroItem = {
   key: string;
   title: string;
@@ -6,6 +9,9 @@ export type ZoteroItem = {
   collections: string[];
 };
 
+/**
+ * Type representing a list of Zotero collections.
+ */
 export type ZoteroCollections = {
   terms: { term: string; type: string }[];
   collection: string;

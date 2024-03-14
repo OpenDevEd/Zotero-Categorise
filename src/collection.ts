@@ -5,6 +5,12 @@ import { validateMatchfield } from './utils/validateParameters';
 import { CommanderOptions, Collection, Options, ZoteroCollections } from './types/collection';
 import { ZoteroItem } from './types/addItemToCollection';
 
+/**
+ * Processes items and adds them to a Zotero collection based on the provided options.
+ *
+ * @param {CommanderOptions} commanderOptions - The options passed from commander.
+ * @returns {Promise<void>} - A Promise that resolves when the operation is finished.
+ */
 async function collection(commanderOptions: CommanderOptions) {
   let FinalOutput = '';
   const itemId = commanderOptions.item;
