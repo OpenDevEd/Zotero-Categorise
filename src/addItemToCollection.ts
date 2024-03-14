@@ -40,7 +40,7 @@ async function addItemToCollection(
   addtag?: string[]
 ) {
   let result: ZoteroItem;
-  let itemId = typeof item === 'string' ? item : item.key;
+  const itemId = typeof item === 'string' ? item : item.key;
 
   try {
     if (typeof item === 'string') {
