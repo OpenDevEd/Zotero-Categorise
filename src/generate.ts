@@ -9,6 +9,8 @@ type CommanderOptions = {
   name: string;
   json?: string;
   recursive?: boolean;
+  addtags?: boolean;
+  tagprefix?: string;
 };
 
 type Options = {
@@ -19,9 +21,10 @@ type Options = {
 };
 
 type Collection = {
-  collection_name: string;
+  topic: string;
   collection: string;
   terms: [{ term: string; description: string; type: string }];
+  tags?: string[];
 };
 
 type ResCollection = {
@@ -77,14 +80,17 @@ async function generate(commanderOptions: CommanderOptions) {
     if (list.library === undefined) list.library = result.library.id;
     // fetch the subcollections
     const results: any = await zotero.collections(options);
-    // fs.writeFileSync('collection.json', JSON.stringify(results));
+    // fs.writeFileSync('collections.json', JSON.stringify(results, null, 4));
 
     async function addChildren(collection: Collection[], parent: any) {
       for (const child of parent.children) {
         // console.log('child name', child.data.name);
         collection.push({
-          collection_name: child.data.name,
+          topic: child.data.name,
           collection: `zotero://select/groups/${list.library}/collections/${child.key}`,
+          tags: commanderOptions.addtags
+            ? [commanderOptions.tagprefix ? `${commanderOptions.tagprefix}${child.data.name}` : child.data.name]
+            : [],
           terms: [{ term: child.data.name, description: 'main', type: 'word' }],
         });
         if (child.children.length > 0) {
@@ -96,8 +102,15 @@ async function generate(commanderOptions: CommanderOptions) {
     // make a list of the subcollections with the collection name, the collection key and the terms
     for (const collectionkey of results) {
       collectionList.collections.push({
-        collection_name: collectionkey.data.name,
+        topic: collectionkey.data.name,
         collection: `zotero://select/groups/${list.library}/collections/${collectionkey.key}`,
+        tags: commanderOptions.addtags
+          ? [
+              commanderOptions.tagprefix
+                ? `${commanderOptions.tagprefix}${collectionkey.data.name}`
+                : collectionkey.data.name,
+            ]
+          : [],
         terms: [{ term: collectionkey.data.name, description: 'main', type: 'word' }],
       });
 
@@ -112,7 +125,7 @@ async function generate(commanderOptions: CommanderOptions) {
   list.addtag = [];
 
   const filename = commanderOptions.name;
-  fs.writeFileSync(filename, JSON.stringify(list));
+  fs.writeFileSync(filename, JSON.stringify(list, null, 4));
 }
 
 export { generate, CommanderOptions };
