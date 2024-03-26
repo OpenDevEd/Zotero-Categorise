@@ -106,6 +106,8 @@ zotero-categorise generate -- -c [collection1] [collection2]
 - `-g, --group [group]`: Specifies the Zotero group ID to work with.
 - `-c, --collection [collection...]`: Lists the Zotero collection IDs to include in the mapping.
 - `-n, --name [name]`: (Optional) Specifies the name of the JSON file that will be generated (default is 'list.json').
+- `--addtags`: Creates a tag that is the same as the collection name
+- `--tagprefix [prefix]`: 'Add prefix to the tag
 
 ### Categorize Items from JSON File
 
