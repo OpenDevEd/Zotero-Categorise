@@ -1,48 +1,16 @@
 import Zotero from 'zotero-lib';
 import fs from 'fs';
-import { ZoteroItem, addItemToCollection } from './addItemToCollection';
+import { addItemToCollection } from './addItemToCollection';
 import { validateMatchfield } from './utils/validateParameters';
+import { CommanderOptions, Collection, Options, ZoteroCollections } from './types/collection';
+import { ZoteroItem } from './types/addItemToCollection';
 
-type CommanderOptions = {
-  item: string[];
-  itemsfromcollection: string;
-  itemswithtag: string;
-  itemswithouttag: string;
-  itemsfromlibrary: boolean;
-  matchfield?: string[];
-  collection: string[];
-  group: string;
-  test: boolean;
-  name: string;
-  json?: string;
-  ignoretag?: string[];
-  addtag?: string[];
-  recursive?: boolean;
-};
-
-type Collection = {
-  data: {
-    name: string;
-    key: string;
-  };
-  meta?: { numCollections: number; numItems: number };
-  children: Collection[];
-};
-
-type Options = {
-  key: string[];
-  top?: boolean;
-  verbose?: boolean;
-  recursive?: boolean;
-};
-
-type ZoteroCollections = {
-  terms: { term: string; type: string }[];
-  collection: string;
-  collection_name: string;
-  situation: string;
-}[];
-
+/**
+ * Processes items and adds them to a Zotero collection based on the provided options.
+ *
+ * @param {CommanderOptions} commanderOptions - The options passed from commander.
+ * @returns {Promise<void>} - A Promise that resolves when the operation is finished.
+ */
 async function collection(commanderOptions: CommanderOptions) {
   let FinalOutput = '';
   const itemId = commanderOptions.item;
@@ -147,7 +115,7 @@ async function collection(commanderOptions: CommanderOptions) {
         collection_name: collectionkey.data.name,
         situation: 'nothing',
       });
-      
+
       if (options.recursive && collectionkey.children?.length > 0) {
         await addChildren(listCollections, collectionkey);
       }
@@ -182,4 +150,4 @@ async function collection(commanderOptions: CommanderOptions) {
   }
 }
 
-export { collection, CommanderOptions };
+export { collection };
