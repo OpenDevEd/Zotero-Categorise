@@ -23,13 +23,13 @@ type ResList = {
   ignoretag: string[];
 };
 type CommanderOptions = {
-  item: string[];
+  item?: string[];
   itemsfromcollection?: string;
   itemswithtag?: string;
   itemswithouttag?: string;
   itemsfromlibrary?: boolean;
   matchfield?: string[];
-  collection: string[];
+  // collection: string[];
   group: string;
   test: boolean;
   name?: string;
@@ -46,7 +46,7 @@ type ZoteroCollections = {
 }[];
 
 // this function is used to categorize items from a JSON file into Zotero collections
-async function generateByJSon(commanderOptions: CommanderOptions) {
+async function collectionByJSon(commanderOptions: CommanderOptions) {
   // check if the user provided a json file
   if (!commanderOptions.json) {
     console.log('Please provide a json file');
@@ -76,7 +76,7 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
     zotero = new Zotero({ verbose: false });
   }
 
-  let items: (string | ZoteroItem)[] = commanderOptions.item;
+  let items: (string | ZoteroItem)[] = commanderOptions.item || [];
   let fetched: { data: ZoteroItem }[] = [];
 
   if (itemsfromcollection) {
@@ -88,7 +88,6 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
   } else if (itemsfromlibrary) {
     fetched = await zotero.items({});
   }
-
   if (fetched.length) {
     items = fetched.map((item) => item.data);
   }
@@ -157,4 +156,4 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
   console.log(FinalOutput);
 }
 
-export { generateByJSon };
+export { collectionByJSon };
