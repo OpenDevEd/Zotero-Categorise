@@ -130,7 +130,7 @@ async function generate(commanderOptions: CommanderOptions) {
   list.ignoretag = [];
   list.addtag = [];
 
-  const filename = commanderOptions.name || 'list.json';
+  const filename = commanderOptions.name ?? 'list.json';
   fs.writeFileSync(filename, JSON.stringify(list, null, 4));
 }
 
