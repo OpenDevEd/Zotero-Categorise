@@ -24,15 +24,15 @@ type ResList = {
 };
 type CommanderOptions = {
   item: string[];
-  itemsfromcollection: string;
-  itemswithtag: string;
-  itemswithouttag: string;
-  itemsfromlibrary: boolean;
+  itemsfromcollection?: string;
+  itemswithtag?: string;
+  itemswithouttag?: string;
+  itemsfromlibrary?: boolean;
   matchfield?: string[];
   collection: string[];
   group: string;
   test: boolean;
-  name: string;
+  name?: string;
   json?: string;
   ignoretag?: string[];
   addtag?: string[];

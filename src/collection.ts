@@ -5,15 +5,15 @@ import { validateMatchfield } from './utils/validateParameters';
 
 type CommanderOptions = {
   item: string[];
-  itemsfromcollection: string;
-  itemswithtag: string;
-  itemswithouttag: string;
-  itemsfromlibrary: boolean;
+  itemsfromcollection?: string;
+  itemswithtag?: string;
+  itemswithouttag?: string;
+  itemsfromlibrary?: boolean;
   matchfield?: string[];
   collection: string[];
   group: string;
   test: boolean;
-  name: string;
+  name?: string;
   json?: string;
   ignoretag?: string[];
   addtag?: string[];
@@ -147,7 +147,7 @@ async function collection(commanderOptions: CommanderOptions) {
         collection_name: collectionkey.data.name,
         situation: 'nothing',
       });
-      
+
       if (options.recursive && collectionkey.children?.length > 0) {
         await addChildren(listCollections, collectionkey);
       }
