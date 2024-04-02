@@ -2,7 +2,6 @@ import Zotero from 'zotero-lib';
 import fs from 'fs';
 
 type CommanderOptions = {
-  item: string[];
   collection: string[];
   group: string;
   test: boolean;
