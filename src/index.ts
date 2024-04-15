@@ -2,7 +2,7 @@
 import { Command } from 'commander';
 import { generate } from './generate';
 import { collection } from './collection';
-import { generateByJSon } from './collectionByJson';
+import { collectionByJson } from './collectionByJson';
 import { CommanderOptions } from 'types/collection';
 
 const program = new Command();
@@ -65,7 +65,7 @@ program
   .option('--ignoretag [ignoretag...]', 'Ignore Items with the Zotero tags')
   .option('--addtag [addtag...]', 'Add a tags to the item')
   .action(async (options: CommanderOptions) => {
-    runner(generateByJSon, options);
+    runner(collectionByJson, options);
   });
 
 program.parse(process.argv);

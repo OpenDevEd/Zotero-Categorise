@@ -12,7 +12,7 @@ import { ZoteroItem } from './types/addItemToCollection';
  * @param {CommanderOptions} commanderOptions - The options passed from commander.
  * @returns {Promise<void>} - A Promise that resolves when the operation is finished.
  */
-async function generateByJSon(commanderOptions: CommanderOptions) {
+async function collectionByJson(commanderOptions: CommanderOptions) {
   // check if the user provided a json file
   if (!commanderOptions.json) {
     console.log('Please provide a json file');
@@ -123,4 +123,4 @@ async function generateByJSon(commanderOptions: CommanderOptions) {
   console.log(FinalOutput);
 }
 
-export { generateByJSon };
+export { collectionByJson };
