@@ -2,11 +2,10 @@ import Zotero from 'zotero-lib';
 import fs from 'fs';
 
 type CommanderOptions = {
-  item: string[];
   collection: string[];
   group: string;
   test: boolean;
-  name: string;
+  name?: string;
   json?: string;
   recursive?: boolean;
   addtags?: boolean;
@@ -131,7 +130,7 @@ async function generate(commanderOptions: CommanderOptions) {
   list.ignoretag = [];
   list.addtag = [];
 
-  const filename = commanderOptions.name;
+  const filename = commanderOptions.name ?? 'list.json';
   fs.writeFileSync(filename, JSON.stringify(list, null, 4));
 }
 
