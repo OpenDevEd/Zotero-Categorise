@@ -1,9 +1,8 @@
 import Zotero from 'zotero-lib';
-import fs from 'fs';
 import { addItemToCollection } from './addItemToCollection';
-import { validateMatchfield } from './utils/validateParameters';
-import { CommanderOptions, Collection, Options, ZoteroCollections } from './types/collection';
 import { ZoteroItem } from './types/addItemToCollection';
+import { Collection, CommanderOptions, Options, ZoteroCollections } from './types/collection';
+import { validateMatchfield } from './utils/validateParameters';
 
 /**
  * Processes items and adds them to a Zotero collection based on the provided options.

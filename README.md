@@ -35,15 +35,19 @@ npm install
 
 ### Binary
 
-The package includes a binary `zotero-categorise`. You can install this with 
+The package includes a binary `zotero-categorise`. You can install this with
+
 ```
 npm build
 npm link
 ```
+
 If you do that, you can use `zotero-categorise` below.
 
 ## Usage
+
 Help works in the usual way
+
 ```
 zotero-categorise
 zotero-categorise -h
@@ -53,6 +57,7 @@ zotero-categorise collectionByJson -h
 ```
 
 ### The `collection` command
+
 You can use the `collection` command to place items into collections.
 
 Here are the available options:
@@ -101,6 +106,8 @@ zotero-categorise generate -- -c [collection1] [collection2]
 - `-g, --group [group]`: Specifies the Zotero group ID to work with.
 - `-c, --collection [collection...]`: Lists the Zotero collection IDs to include in the mapping.
 - `-n, --name [name]`: (Optional) Specifies the name of the JSON file that will be generated (default is 'list.json').
+- `--addtags`: Creates a tag that is the same as the collection name
+- `--tagprefix [prefix]`: 'Add prefix to the tag
 
 ### Categorize Items from JSON File
 
@@ -120,3 +127,37 @@ zotero-categorise collectionByJson -- -j [json file] -i [item...]
 - `--itemsfromlibrary`: Process all items in the library.
 - `--matchfield <fields>`: Fields to match. Can be one or more of title, tags, description or all, separated by commas.
 - `-t, --test`: Use test mode, which does not actually place items in the collection. This is useful for verification and testing.
+
+### Flexible Term Matching
+
+The `collectionByJson` command supports specifying terms with different types for categorization:
+
+- `word`: Matches the exact word.
+- `words`: Matches any of the words in the provided term.
+- `regex`: Matches using regular expressions.
+
+##### Exemple
+
+```json
+[
+  {
+    "terms": [
+      {
+        "term": "\\bNiger\\b",
+        "description": "main",
+        "type": "regex"
+      },
+      {
+        "term": "Niger/ien/iens",
+        "description": "main",
+        "type": "words"
+      },
+      {
+        "term": "Nigerien",
+        "description": "adjective",
+        "type": "word"
+      }
+    ]
+  }
+]
+```

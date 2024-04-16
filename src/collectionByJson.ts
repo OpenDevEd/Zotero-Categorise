@@ -1,10 +1,9 @@
 import fs from 'fs';
-import { collection } from './collection';
 import Zotero from 'zotero-lib';
 import { addItemToCollection } from './addItemToCollection';
-import { validateMatchfield } from './utils/validateParameters';
-import { CommanderOptions, ResList, ZoteroCollections } from './types/collectionByJson';
 import { ZoteroItem } from './types/addItemToCollection';
+import { CommanderOptions, ResList, ZoteroCollections } from './types/collectionByJson';
+import { validateMatchfield } from './utils/validateParameters';
 
 /**
  * Categorizes items from a JSON file into Zotero collections based on the provided options.
@@ -42,7 +41,7 @@ async function collectionByJson(commanderOptions: CommanderOptions) {
     zotero = new Zotero({ verbose: false });
   }
 
-  let items: (string | ZoteroItem)[] = commanderOptions.item;
+  let items: (string | ZoteroItem)[] = commanderOptions.item || [];
   let fetched: { data: ZoteroItem }[] = [];
 
   if (itemsfromcollection) {
@@ -54,7 +53,6 @@ async function collectionByJson(commanderOptions: CommanderOptions) {
   } else if (itemsfromlibrary) {
     fetched = await zotero.items({});
   }
-
   if (fetched.length) {
     items = fetched.map((item) => item.data);
   }

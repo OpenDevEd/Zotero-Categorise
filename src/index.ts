@@ -47,6 +47,8 @@ program
   .option('-c --collection [collection...]', 'Zotero collection ID')
   .option('-n --name [name]', 'Name of the json file', 'list.json')
   .option('-r --recursive', 'Recursively add subcollections to the list')
+  .option('--addtags', 'creates a tag that is the same as the collection name')
+  .option('--tagprefix [prefix]', 'add prefix to the tag')
   .action(async (options: CommanderOptions) => {
     runner(generate, options);
   });
