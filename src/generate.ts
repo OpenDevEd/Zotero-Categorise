@@ -1,43 +1,6 @@
 import Zotero from 'zotero-lib';
 import fs from 'fs';
-
-type CommanderOptions = {
-  collection: string[];
-  group: string;
-  test: boolean;
-  name?: string;
-  json?: string;
-  recursive?: boolean;
-  addtags?: boolean;
-  tagprefix?: string;
-};
-
-type Options = {
-  key: string[];
-  top?: boolean;
-  verbose?: boolean;
-  recursive?: boolean;
-};
-
-type Collection = {
-  topic: string;
-  collection: string;
-  terms: [{ term: string; description: string; type: string }];
-  tags?: string[];
-};
-
-type ResCollection = {
-  collections?: Collection[];
-  source_collection?: string;
-  source_collection_name?: string;
-};
-
-type ResList = {
-  library?: string;
-  source_collections?: ResCollection[];
-  addtag?: string[];
-  ignoretag?: string[];
-};
+import { Collection, CommanderOptions, Options, ResCollection, ResList } from './types/generate';
 
 function getZotero(groupid: string) {
   if (!groupid) {
@@ -45,6 +8,7 @@ function getZotero(groupid: string) {
   }
   return new Zotero({ verbose: false, 'group-id': groupid });
 }
+
 async function addChildren(collection: Collection[], parent: any, list: ResList, commanderOptions: CommanderOptions) {
   for (const child of parent.children) {
     collection.push({
@@ -89,8 +53,14 @@ async function makelist(
   }
 }
 
+/**
+ * Generates a list of collections and subcollections from Zotero based on the provided options.
+ *
+ * @param {CommanderOptions} commanderOptions - The options passed from commander.
+ * @returns {Promise<void>} - A Promise that resolves when the operation is finished.
+ */
 async function generate(commanderOptions: CommanderOptions) {
-  let zotero: Zotero = getZotero(commanderOptions.group);
+  const zotero: Zotero = getZotero(commanderOptions.group);
   if (!commanderOptions.collection) {
     console.log('You must provide at least one collection');
     return;

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { generate } from './generate';
-import { collection, CommanderOptions } from './collection';
-import { collectionByJSon } from './collectionByJson';
+import { collection } from './collection';
+import { collectionByJson } from './collectionByJson';
+import { CommanderOptions } from 'types/collection';
 
 const program = new Command();
 
@@ -29,10 +30,7 @@ program
   .option('--itemswithtag <tag>', 'Process items with this tag')
   .option('--itemswithouttag <tag>', 'Process items that do not have this tag')
   .option('--itemsfromlibrary', 'Process all items in the library')
-  .option(
-    '--matchfield [fields...]',
-    'Fields to match. Can be one or more of title, tags, description or all, separated by commas'
-  )
+  .option('--matchfield [fields...]', 'Fields to match. Can be one or more of title, tags, description or all')
   .option('-g, --group <group>', 'Group Id to place item in')
   .option('-t, --test', 'test mode, do not actually place item in collection')
   .option('--ignoretag [ignoretag...]', 'Ignore Items with the Zotero tag')
@@ -64,15 +62,12 @@ program
   .option('--itemswithtag <tag>', 'Process items with this tag')
   .option('--itemswithouttag <tag>', 'Process items that do not have this tag')
   .option('--itemsfromlibrary', 'Process all items in the library')
-  .option(
-    '--matchfield [fields...]',
-    'Fields to match. Can be one or more of title, tags, description or all, separated by commas'
-  )
+  .option('--matchfield [fields...]', 'Fields to match. Can be one or more of title, tags, description or all')
   .option('-t, --test', 'test mode, do not actually place item in collection')
   .option('--ignoretag [ignoretag...]', 'Ignore Items with the Zotero tags')
   .option('--addtag [addtag...]', 'Add a tags to the item')
   .action(async (options: CommanderOptions) => {
-    runner(collectionByJSon, options);
+    runner(collectionByJson, options);
   });
 
 program.parse(process.argv);

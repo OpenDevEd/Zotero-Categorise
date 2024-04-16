@@ -1,20 +1,13 @@
 import Zotero from 'zotero-lib';
+import { ZoteroCollections, ZoteroItem } from './types/addItemToCollection';
 
-export type ZoteroItem = {
-  key: string;
-  title: string;
-  abstractNote: string;
-  tags: [{ tag: string }];
-  collections: string[];
-};
-
-type ZoteroCollections = {
-  terms: { term: string; type: string }[];
-  collection: string;
-  collection_name: string;
-  situation: string;
-}[];
-
+/**
+ * Extracts the collection ID.
+ *
+ * @param {string} collection - The collection string to process.
+ * @returns {string} - The last part of the collection string after the last '/' character,
+ * or the original string if there is no '/' character.
+ */
 function getCollectionLetters(collection: string) {
   if (collection.includes('/')) {
     const words = collection.split('/');
@@ -23,6 +16,19 @@ function getCollectionLetters(collection: string) {
   return collection;
 }
 
+/**
+ * Adds an item to a Zotero collection based on the provided options.
+ *
+ * @param {string | ZoteroItem} item - The item to be added to the collection. Can be a string or a ZoteroItem.
+ * @param {Zotero} zotero - The Zotero instance to use for the operation.
+ * @param {string[]} matchfield - The fields to match against when adding the item.
+ * @param {ZoteroCollections} listCollections - The list of collections to add the item to.
+ * @param {boolean} testmode - Whether to run the function in test mode.
+ * @param {string} FinalOutput - The final output string.
+ * @param {string[]} ignoretag - tags to ignore when adding the item.
+ * @param {string[]} addtag - tags to add to the item.
+ * @returns {Promise<string>} - A Promise that resolves with the final output string when the operation is finished.
+ */
 async function addItemToCollection(
   item: string | ZoteroItem,
   zotero: Zotero,
@@ -34,7 +40,7 @@ async function addItemToCollection(
   addtag?: string[]
 ) {
   let result: ZoteroItem;
-  let itemId = typeof item === 'string' ? item : item.key;
+  const itemId = typeof item === 'string' ? item : item.key;
 
   try {
     if (typeof item === 'string') {
